@@ -1,5 +1,6 @@
 package de.hda.fbi.db2.stud.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
@@ -8,6 +9,7 @@ public class Category {
 
     public Category(String name, Question question){
         this.name = name;
+        this.questionList = new ArrayList<>();
         this.questionList.add(question);
     }
 
