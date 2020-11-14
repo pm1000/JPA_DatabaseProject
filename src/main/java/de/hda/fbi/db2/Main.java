@@ -2,7 +2,7 @@ package de.hda.fbi.db2;
 
 import de.hda.fbi.db2.controller.Controller;
 
-/**
+/** test new branch
  * Main Class.
  *
  * @author L. Koehler test
