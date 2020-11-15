@@ -4,8 +4,12 @@ import de.hda.fbi.db2.api.Lab01Data;
 import de.hda.fbi.db2.stud.entity.Category;
 import de.hda.fbi.db2.stud.entity.Question;
 
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Arrays;
+
 
 public class Lab01DataImpl extends Lab01Data {
 

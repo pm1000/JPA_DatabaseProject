@@ -57,4 +57,13 @@ public class Category {
         + '\''
         + '}';
   }
+
+
+  /**
+   * Getter for the categoryName.
+   * @return Returns the category name.
+   */
+  public String getCategoryName() {
+    return categoryName;
+  }
 }

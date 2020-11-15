@@ -21,7 +21,10 @@ public class Question {
    * @param paAnswers       A list of answers for the questions.
    * @param paCorrectAnswer The index of the correct answer.
    */
-  public Question(int paQuestionId, String paQuestionText, ArrayList<String> paAnswers, int paCorrectAnswer) {
+  public Question(int paQuestionId,
+                  String paQuestionText,
+                  ArrayList<String> paAnswers,
+                  int paCorrectAnswer) {
 
     this.questionId = paQuestionId;
     this.questionText = paQuestionText;
@@ -38,11 +41,55 @@ public class Question {
   @Override
   public String toString() {
     return "Question{"
-        + "questionText='"
+        + "questionId="
+        + questionId
+        + ", questionText='"
         + questionText
         + '\''
         + ", answers="
         + answers
+        + ", correctAnswer="
+        + correctAnswer
         + '}';
+  }
+
+
+  /**
+   * Getter for the question id.
+   *
+   * @return Returns the question id.
+   */
+  public int getQuestionId() {
+    return questionId;
+  }
+
+
+  /**
+   * Getter for the question text.
+   *
+   * @return Returns the question text
+   */
+  public String getQuestionText() {
+    return questionText;
+  }
+
+
+  /**
+   * Getter for the answers.
+   *
+   * @return Returns a list of possible answers.
+   */
+  public ArrayList<String> getAnswers() {
+    return answers;
+  }
+
+
+  /**
+   * Getter for the correctAnswer.
+   *
+   * @return Returns the correct answer index.
+   */
+  public int getCorrectAnswer() {
+    return correctAnswer;
   }
 }
