@@ -60,5 +60,7 @@ public class Lab01Impl extends Lab01Data {
                 e.printStackTrace();
             }
         }
+
+        System.out.println("Num of Categories: " + this.categoryList.size() + "\tNum of Questions: " + getQuestions().size());
     }
 }
