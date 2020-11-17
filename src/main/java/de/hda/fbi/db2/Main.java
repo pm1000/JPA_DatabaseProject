@@ -5,7 +5,7 @@ import de.hda.fbi.db2.controller.Controller;
 /**
  * Main Class.
  *
- * @author L. Koehler
+ * @author L. Koehler test
  */
 public class Main {
 
