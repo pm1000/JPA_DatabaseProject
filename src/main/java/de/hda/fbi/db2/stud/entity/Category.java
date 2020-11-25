@@ -7,6 +7,11 @@ public class Category {
     private String name;
     private List<Question> questionList;
 
+    public Category(String name){
+        this.name = name;
+        this.questionList = new ArrayList<>();
+    }
+
     public Category(String name, Question question){
         this.name = name;
         this.questionList = new ArrayList<>();

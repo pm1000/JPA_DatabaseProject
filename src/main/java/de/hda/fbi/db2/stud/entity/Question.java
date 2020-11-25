@@ -7,12 +7,14 @@ public class Question {
     private String question;
     private List<String> answerOptions;
     private int correctAnswer;
+    private Category category;
 
-    public Question(int id, String question, List<String> answerOptions, int correctAnswer){
+    public Question(int id, String question, List<String> answerOptions, int correctAnswer,Category category){
         this.id = id;
         this.question = question;
         this.answerOptions = answerOptions;
         this.correctAnswer = correctAnswer;
+        this.category = category;
     }
 
     public int getId() {

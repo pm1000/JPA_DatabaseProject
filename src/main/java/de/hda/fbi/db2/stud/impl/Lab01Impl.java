@@ -45,19 +45,20 @@ public class Lab01Impl extends Lab01Data {
                 boolean categoryFound = false;
                 for (int i = 0; i < this.categoryList.size(); ++i){
                     if (this.categoryList.get(i).getName().equals(categoryName)){
-                        this.categoryList.get(i).addQuestion(new Question(id, question, answerOptions, correctAnswer));
+                        this.categoryList.get(i).addQuestion(new Question(id, question, answerOptions, correctAnswer, this.categoryList.get(i)));
                         categoryFound = true;
                         break;
                     }
                 }
 
                 if (!categoryFound){
-                    this.categoryList.add(new Category(categoryName, new Question(id, question, answerOptions, correctAnswer)));
+                    Category newCat = new Category(categoryName);
+                    this.categoryList.add(newCat);
+                    newCat.addQuestion(new Question(id, question, answerOptions, correctAnswer, newCat));
                 }
 
 
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
         }
 
