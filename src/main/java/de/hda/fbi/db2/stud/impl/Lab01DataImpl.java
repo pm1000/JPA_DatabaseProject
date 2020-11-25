@@ -67,30 +67,30 @@ public class Lab01DataImpl extends Lab01Data {
     @Override
     public void loadCsvFile(List<String[]> additionalCsvLines) {
 
-// Init the new list
+        // Init the new list
         this.categoryList = new HashMap<>();
 
-// For each line from the csv file
+        // For each line from the csv file
         for (int i = 1; i < additionalCsvLines.size(); i++) {
             String[] tmp = additionalCsvLines.get(i);
 
             try {
-// Get or create a new category for this question.
+                // Get or create a new category for this question.
                 Category cat = categoryList.get(tmp[7]);
                 if (cat == null) {
                     cat = new Category(tmp[7]);
                     this.categoryList.put(tmp[7], cat);
                 }
 
-// Create a new question an add the question to the category
+                // Create a new question an add the question to the category
                 int questionId = Integer.parseInt(tmp[0]);
-                int correctAnswer = Integer.parseInt(tmp[6]);
+                int correctAnswer = Integer.parseInt(tmp[6]) - 1;
                 ArrayList<String> answers = new ArrayList<>();
                 answers.add(tmp[2]);
                 answers.add(tmp[3]);
                 answers.add(tmp[4]);
                 answers.add(tmp[5]);
-                Question qes = new Question(questionId, tmp[1], answers, correctAnswer);
+                Question qes = new Question(cat, questionId, tmp[1], answers, correctAnswer);
 
                 cat.addQuestion(qes);
 

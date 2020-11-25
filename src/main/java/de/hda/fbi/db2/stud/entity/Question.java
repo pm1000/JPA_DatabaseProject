@@ -11,6 +11,7 @@ public class Question {
   private String questionText;
   private ArrayList<String> answers;
   private int correctAnswer;
+  private Category cat;
 
 
   /**
@@ -21,7 +22,8 @@ public class Question {
    * @param paAnswers       A list of answers for the questions.
    * @param paCorrectAnswer The index of the correct answer.
    */
-  public Question(int paQuestionId,
+  public Question(Category paCat,
+                  int paQuestionId,
                   String paQuestionText,
                   ArrayList<String> paAnswers,
                   int paCorrectAnswer) {
@@ -30,6 +32,7 @@ public class Question {
     this.questionText = paQuestionText;
     this.answers = paAnswers;
     this.correctAnswer = paCorrectAnswer;
+    this.cat = paCat;
   }
 
 
@@ -91,5 +94,16 @@ public class Question {
    */
   public int getCorrectAnswer() {
     return correctAnswer;
+  }
+
+
+
+  /**
+   * Getter for the category.
+   *
+   * @return Returns the category.
+   */
+  public Category getCategory() {
+    return cat;
   }
 }
