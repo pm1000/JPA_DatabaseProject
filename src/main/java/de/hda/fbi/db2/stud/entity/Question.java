@@ -1,48 +1,109 @@
-
-
 package de.hda.fbi.db2.stud.entity;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class Question {
-    private int id;
-    private String question;
-    private List<String> answerOptions;
-    private int correctAnswer;
-    private Category category;
 
-    public Question(int id, String question, List<String> answerOptions, int correctAnswer,Category category){
-        this.id = id;
-        this.question = question;
-        this.answerOptions = answerOptions;
-        this.correctAnswer = correctAnswer;
-        this.category = category;
-    }
+  /**
+   * Object attributes.
+   */
+  private int questionId;
+  private String questionText;
+  private ArrayList<String> answers;
+  private int correctAnswer;
+  private Category cat;
 
-    public int getId() {
-        return id;
-    }
 
-    public String getQuestion() {
-        return question;
-    }
+  /**
+   * Constructor.
+   *
+   * @param paQuestionId    The question id.
+   * @param paQuestionText  The question text.
+   * @param paAnswers       A list of answers for the questions.
+   * @param paCorrectAnswer The index of the correct answer.
+   */
+  public Question(Category paCat,
+                  int paQuestionId,
+                  String paQuestionText,
+                  ArrayList<String> paAnswers,
+                  int paCorrectAnswer) {
 
-    public List<String> getAnswerOptions() {
-        return answerOptions;
-    }
+    this.questionId = paQuestionId;
+    this.questionText = paQuestionText;
+    this.answers = paAnswers;
+    this.correctAnswer = paCorrectAnswer;
+    this.cat = paCat;
+  }
 
-    public int getCorrectAnswer() {
-        return correctAnswer;
-    }
 
-    public Category getCategory(){return  category;}
+  /**
+   * A better look for the toString java method.
+   *
+   * @return Returns a String containing information from the object.
+   */
+  @Override
+  public String toString() {
+    return "Question{"
+        + "questionId="
+        + questionId
+        + ", questionText='"
+        + questionText
+        + '\''
+        + ", answers="
+        + answers
+        + ", correctAnswer="
+        + correctAnswer
+        + '}';
+  }
 
-    public String printOutput(){
-        String out = "id: " + this.id + " Frage: " + this.question;
-        for (int x = 0; x < this.answerOptions.size(); x++)
-            out += " Antwortmöglichkeit " + x + ":" + this.answerOptions.get(x);
-        out += " Korrekte Antwort: " + correctAnswer + 1 + " Kategorie: " + this.category.getName();
-        return out;
-    }
+
+  /**
+   * Getter for the question id.
+   *
+   * @return Returns the question id.
+   */
+  public int getQuestionId() {
+    return questionId;
+  }
+
+
+  /**
+   * Getter for the question text.
+   *
+   * @return Returns the question text
+   */
+  public String getQuestionText() {
+    return questionText;
+  }
+
+
+  /**
+   * Getter for the answers.
+   *
+   * @return Returns a list of possible answers.
+   */
+  public ArrayList<String> getAnswers() {
+    return answers;
+  }
+
+
+  /**
+   * Getter for the correctAnswer.
+   *
+   * @return Returns the correct answer index.
+   */
+  public int getCorrectAnswer() {
+    return correctAnswer;
+  }
+
+
+
+  /**
+   * Getter for the category.
+   *
+   * @return Returns the category.
+   */
+  public Category getCategory() {
+    return cat;
+  }
 }
-

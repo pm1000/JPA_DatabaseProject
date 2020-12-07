@@ -4,23 +4,66 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-    private String name;
-    private List<Question> questionList = new ArrayList<>();
 
-    public Category(String name){
-        this.name = name;
-        this.questionList = new ArrayList<>();
-    }
+  /**
+   * Object attributes.
+   */
+  private String categoryName;
+  private ArrayList<Question> questionList;
 
-    public String getName() {
-        return name;
-    }
 
-    public void addQuestion(Question question){
-        this.questionList.add(question);
-    }
+  /**
+   * Constructor.
+   */
+  public Category(String paName) {
 
-    public List<Question> getQuestionList() {
-        return questionList;
-    }
+    this.categoryName = paName;
+    this.questionList = new ArrayList<>();
+  }
+
+
+  /**
+   * Add q question to the list.
+   *
+   * @param paQuestion The question that should be added.
+   */
+  public void addQuestion(Question paQuestion) {
+
+    questionList.add(paQuestion);
+  }
+
+
+  /**
+   * Return a list of all questions for this category.
+   *
+   * @return Returns a list of all questions.
+   */
+  public List<Question> getQuestions() {
+
+    return questionList;
+  }
+
+
+  /**
+   * A better way to get information about this category.
+   *
+   * @return A string containing information about the object.
+   */
+  @Override
+  public String toString() {
+    return "Category{"
+        + "categoryName='"
+        + categoryName
+        + '\''
+        + '}';
+  }
+
+
+  /**
+   * Getter for the categoryName.
+   * @return Returns the category name.
+   */
+  public String getCategoryName() {
+    return categoryName;
+  }
 }
