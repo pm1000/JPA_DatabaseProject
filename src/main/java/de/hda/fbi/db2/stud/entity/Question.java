@@ -1,19 +1,26 @@
 package de.hda.fbi.db2.stud.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 
+@Entity
+@Table(name = "Question", schema = "db2")
 public class Question {
 
   /**
    * Object attributes.
    */
+  @Id
   private int questionId;
   private String questionText;
+  @ElementCollection
+  @OrderColumn(name="answerOrder")
   private ArrayList<String> answers;
   private int correctAnswer;
+  @ManyToOne
   private Category cat;
 
-
+  public Question(){}
   /**
    * Constructor.
    *
@@ -105,5 +112,18 @@ public class Question {
    */
   public Category getCategory() {
     return cat;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.questionId;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    Question tmp = (Question) obj;
+    if (this.questionId == tmp.getQuestionId())
+      return true;
+    return false;
   }
 }
