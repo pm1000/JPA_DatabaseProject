@@ -83,9 +83,11 @@ public class Category {
 
   @Override
   public boolean equals(Object obj) {
-    Category tmp = (Category) obj;
-    if (this.categoryName.compareTo(tmp.getCategoryName()) == 0)
-      return true;
+    if (obj != null && Category.class.isInstance(obj) == true){
+      Category tmp = (Category) obj;
+      if (this.categoryName.compareTo(tmp.getCategoryName()) == 0)
+        return true;
+    }
     return false;
   }
 }

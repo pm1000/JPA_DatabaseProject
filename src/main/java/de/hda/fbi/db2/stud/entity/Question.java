@@ -121,9 +121,11 @@ public class Question {
 
   @Override
   public boolean equals(Object obj) {
-    Question tmp = (Question) obj;
-    if (this.questionId == tmp.getQuestionId())
-      return true;
+    if (obj != null && Question.class.isInstance(obj) == true){
+      Question tmp = (Question) obj;
+      if (this.questionId == tmp.getQuestionId())
+        return true;
+    }
     return false;
   }
 }
