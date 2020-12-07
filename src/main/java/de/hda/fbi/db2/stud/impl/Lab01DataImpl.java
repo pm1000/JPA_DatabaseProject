@@ -99,7 +99,16 @@ public class Lab01DataImpl extends Lab01Data {
                 e.printStackTrace();
             }
         }
+
+
         System.out.println("Finished adding categories and questions.");
+
+        System.out.println("Alle Fragen:");
+
+        for (Question q : (ArrayList<Question>) getQuestions()) {
+            System.out.println(q.toString());
+        }
+
         System.out.println("There are "
           + categoryList.size()
           + " categories and "
