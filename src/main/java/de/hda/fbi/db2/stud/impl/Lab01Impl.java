@@ -63,6 +63,14 @@ public class Lab01Impl extends Lab01Data {
             }
         }
 
-        System.out.println("Num of Categories: " + this.categoryList.size() + "\tNum of Questions: " + getQuestions().size());
+        printQuestions();
+    }
+
+    private void printQuestions(){
+        List<Question> questionList = getQuestions();
+        System.out.println("Num of Categories: " + this.categoryList.size() + "\tNum of Questions: " + questionList.size());
+        for (int x = 0; x < questionList.size(); x++){
+            System.out.println(questionList.get(x).printOutput());
+        }
     }
 }
