@@ -13,7 +13,7 @@ public class Category {
    * Object attributes.
    */
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="xyz.id_cat")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="id_cat")
   private int catID;
   private String categoryName;
   @OneToMany(mappedBy = "cat")
