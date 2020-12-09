@@ -50,13 +50,11 @@ public class Question {
    */
   @Override
   public String toString() {
-    return "Question{"
-        + "questionId="
+    return "Question ("
         + questionId
-        + ", questionText='"
+        + "): "
         + questionText
-        + '\''
-        + ", answers="
+        + "; answers:"
         + answers
         + ", correctAnswer="
         + correctAnswer

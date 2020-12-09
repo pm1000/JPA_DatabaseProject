@@ -105,8 +105,19 @@ public class Lab01DataImpl extends Lab01Data {
 
         System.out.println("Alle Fragen:");
 
-        for (Question q : (ArrayList<Question>) getQuestions()) {
-            System.out.println(q.toString());
+        for (Object obj : getCategories()) {
+            Category c = (Category) obj;
+
+            // Categoryname
+            System.out.println(c.getCategoryName() + ":");
+
+            for (Object obj2 : c.getQuestions()) {
+                Question q = (Question) obj2;
+
+                // Question
+                System.out.println(q.toString());
+            }
+            System.out.print("\n\n");
         }
 
         System.out.println("There are "
