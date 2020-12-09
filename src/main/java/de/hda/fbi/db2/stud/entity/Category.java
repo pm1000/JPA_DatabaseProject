@@ -1,20 +1,20 @@
 package de.hda.fbi.db2.stud.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Category", schema = "db2")
+@Table(name = "Category", schema = "db2",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"categoryName"}))
 public class Category {
 
   /**
    * Object attributes.
    */
   @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="xyz.id_cat")
+  private int catID;
   private String categoryName;
   @OneToMany(mappedBy = "cat")
   private ArrayList<Question> questionList;
@@ -76,18 +76,21 @@ public class Category {
     return categoryName;
   }
 
+  public int getCatID(){return this.catID;}
+
   @Override
   public int hashCode() {
-    return this.categoryName.hashCode();
+    return this.catID;
   }
 
   @Override
   public boolean equals(Object obj) {
     if (obj != null && Category.class.isInstance(obj) == true){
       Category tmp = (Category) obj;
-      if (this.categoryName.compareTo(tmp.getCategoryName()) == 0)
+      if (this.catID == tmp.getCatID())
         return true;
     }
+
     return false;
   }
 }
