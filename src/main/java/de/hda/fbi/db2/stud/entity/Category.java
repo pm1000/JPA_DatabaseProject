@@ -1,36 +1,44 @@
 package de.hda.fbi.db2.stud.entity;
 
-import org.eclipse.persistence.exceptions.IntegrityException;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
-@Table(name = "Category", schema = "db2",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"categoryName"}))
+@Table(name = "Category", schema = "db2")
 public class Category {
 
   /**
    * Object attributes.
    */
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="id_cat")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_cat")
   private int catID;
-  private String categoryName;
+
+  @Column(unique = true)
+  private String name;
+
   @OneToMany(mappedBy = "cat")
   private ArrayList<Question> questionList;
 
-  public Category(){}
+
+  /**
+   * Constructor.
+   */
+  public Category() {
+
+  }
+
+
 
   /**
    * Constructor.
    */
   public Category(String paName) {
 
-    this.categoryName = paName;
+    this.name = paName;
     this.questionList = new ArrayList<>();
-
   }
 
 
@@ -65,7 +73,7 @@ public class Category {
   public String toString() {
     return "Category{"
         + "categoryName='"
-        + categoryName
+        + name
         + '\''
         + '}';
   }
@@ -76,22 +84,46 @@ public class Category {
    * @return Returns the category name.
    */
   public String getCategoryName() {
-    return categoryName;
+    return name;
   }
 
-  public int getCatID(){return this.catID;}
 
+  /**
+   * Get the category id.
+   *
+   * @return The category id.
+   */
+  public int getCatID() {
+    return this.catID;
+  }
+
+
+
+  /**
+   * Generate a hash code for this object.
+   *
+   * @return The hash code.
+   */
   @Override
   public int hashCode() {
     return this.catID;
   }
 
+
+
+  /**
+   * Check the equality of the object.
+   *
+   * @param obj The object to compare with
+   * @return true, if the object equals the given one.
+   */
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && Category.class.isInstance(obj) == true){
+    if (obj != null && Category.class.isInstance(obj) == true) {
       Category tmp = (Category) obj;
-      if (this.catID == tmp.getCatID())
+      if (this.catID == tmp.getCatID()) {
         return true;
+      }
     }
 
     return false;

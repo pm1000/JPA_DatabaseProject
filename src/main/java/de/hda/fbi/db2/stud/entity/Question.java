@@ -2,6 +2,8 @@ package de.hda.fbi.db2.stud.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "Question", schema = "db2")
@@ -13,14 +15,26 @@ public class Question {
   @Id
   private int questionId;
   private String questionText;
+
   @ElementCollection
-  @OrderColumn(name="answerOrder")
-  private ArrayList<String> answers;
+  @CollectionTable(schema = "db2")
+  @OrderColumn(name = "answerOrder")
+  private List<String> answers;
   private int correctAnswer;
+
   @ManyToOne
   private Category cat;
 
-  public Question(){}
+
+  /**
+   * Constructor.
+   */
+  public Question(){
+
+  }
+
+
+
   /**
    * Constructor.
    *
@@ -87,7 +101,7 @@ public class Question {
    *
    * @return Returns a list of possible answers.
    */
-  public ArrayList<String> getAnswers() {
+  public List<String> getAnswers() {
     return answers;
   }
 
@@ -112,17 +126,33 @@ public class Question {
     return cat;
   }
 
+
+
+  /**
+   * Generate a hash code for this object.
+   *
+   * @return The hash code.
+   */
   @Override
   public int hashCode() {
     return this.questionId;
   }
 
+
+
+  /**
+   * Check the equality of the object.
+   *
+   * @param obj The object to compare with
+   * @return true, if the object equals the given one.
+   */
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && Question.class.isInstance(obj) == true){
+    if (obj != null && Question.class.isInstance(obj) == true) {
       Question tmp = (Question) obj;
-      if (this.questionId == tmp.getQuestionId())
+      if (this.questionId == tmp.getQuestionId()) {
         return true;
+      }
     }
     return false;
   }
