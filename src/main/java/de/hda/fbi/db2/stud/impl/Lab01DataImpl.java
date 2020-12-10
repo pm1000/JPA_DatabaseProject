@@ -94,7 +94,7 @@ public class Lab01DataImpl extends Lab01Data {
 
                 cat.addQuestion(qes);
 
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 System.err.println("Error with csv-entry: " + Arrays.toString(tmp));
                 e.printStackTrace();
             } catch (Exception e) {
