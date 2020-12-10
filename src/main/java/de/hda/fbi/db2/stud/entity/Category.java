@@ -1,5 +1,7 @@
 package de.hda.fbi.db2.stud.entity;
 
+import org.eclipse.persistence.exceptions.IntegrityException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class Category {
 
     this.categoryName = paName;
     this.questionList = new ArrayList<>();
+
   }
 
 
