@@ -119,11 +119,9 @@ public class Category {
    */
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && Category.class.isInstance(obj) == true) {
+    if (obj instanceof Category) {
       Category tmp = (Category) obj;
-      if (this.catID == tmp.getCatID()) {
-        return true;
-      }
+      return this.catID == tmp.getCatID();
     }
 
     return false;

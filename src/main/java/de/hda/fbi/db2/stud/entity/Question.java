@@ -1,5 +1,7 @@
 package de.hda.fbi.db2.stud.entity;
 
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Question {
   @ElementCollection
   @CollectionTable(schema = "db2")
   @OrderColumn(name = "answerOrder")
-  private List<String> answers;
+  private List<String> answers;   // Hier noch Annotation für PK, wir wissen aber nicht wie :/
   private int correctAnswer;
 
   @ManyToOne
@@ -148,11 +150,9 @@ public class Question {
    */
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && Question.class.isInstance(obj) == true) {
+    if (obj instanceof Question) {
       Question tmp = (Question) obj;
-      if (this.questionId == tmp.getQuestionId()) {
-        return true;
-      }
+      return this.questionId == tmp.getQuestionId();
     }
     return false;
   }
