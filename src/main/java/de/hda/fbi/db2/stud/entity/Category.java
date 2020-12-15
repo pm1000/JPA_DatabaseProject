@@ -1,8 +1,8 @@
 package de.hda.fbi.db2.stud.entity;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 
 
 @Entity
@@ -13,14 +13,14 @@ public class Category {
    * Object attributes.
    */
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_cat")
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int catID;
 
   @Column(unique = true)
   private String name;
 
   @OneToMany(mappedBy = "cat")
-  private ArrayList<Question> questionList;
+  private List<Question> questionList;
 
 
   /**
@@ -29,7 +29,6 @@ public class Category {
   public Category() {
 
   }
-
 
 
   /**
@@ -72,15 +71,16 @@ public class Category {
   @Override
   public String toString() {
     return "Category{"
-        + "categoryName='"
-        + name
-        + '\''
-        + '}';
+             + "categoryName='"
+             + name
+             + '\''
+             + '}';
   }
 
 
   /**
    * Getter for the categoryName.
+   *
    * @return Returns the category name.
    */
   public String getCategoryName() {
@@ -98,7 +98,6 @@ public class Category {
   }
 
 
-
   /**
    * Generate a hash code for this object.
    *
@@ -110,7 +109,6 @@ public class Category {
   }
 
 
-
   /**
    * Check the equality of the object.
    *
@@ -119,11 +117,9 @@ public class Category {
    */
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && Category.class.isInstance(obj) == true) {
+    if (obj instanceof Category) {
       Category tmp = (Category) obj;
-      if (this.catID == tmp.getCatID()) {
-        return true;
-      }
+      return this.catID == tmp.getCatID();
     }
 
     return false;

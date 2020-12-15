@@ -1,8 +1,8 @@
 package de.hda.fbi.db2.stud.entity;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 
 
 @Entity
@@ -19,7 +19,7 @@ public class Question {
   @ElementCollection
   @CollectionTable(schema = "db2")
   @OrderColumn(name = "answerOrder")
-  private List<String> answers;
+  private List<String> answers;   // Hier noch Annotation für PK, wir wissen aber nicht wie :/
   private int correctAnswer;
 
   @ManyToOne
@@ -29,10 +29,9 @@ public class Question {
   /**
    * Constructor.
    */
-  public Question(){
+  public Question() {
 
   }
-
 
 
   /**
@@ -65,14 +64,14 @@ public class Question {
   @Override
   public String toString() {
     return "Question ("
-        + questionId
-        + "): "
-        + questionText
-        + "; answers:"
-        + answers
-        + ", correctAnswer="
-        + correctAnswer
-        + '}';
+             + questionId
+             + "): "
+             + questionText
+             + "; answers:"
+             + answers
+             + ", correctAnswer="
+             + correctAnswer
+             + '}';
   }
 
 
@@ -116,7 +115,6 @@ public class Question {
   }
 
 
-
   /**
    * Getter for the category.
    *
@@ -125,7 +123,6 @@ public class Question {
   public Category getCategory() {
     return cat;
   }
-
 
 
   /**
@@ -139,7 +136,6 @@ public class Question {
   }
 
 
-
   /**
    * Check the equality of the object.
    *
@@ -148,11 +144,9 @@ public class Question {
    */
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && Question.class.isInstance(obj) == true) {
+    if (obj instanceof Question) {
       Question tmp = (Question) obj;
-      if (this.questionId == tmp.getQuestionId()) {
-        return true;
-      }
+      return this.questionId == tmp.getQuestionId();
     }
     return false;
   }
