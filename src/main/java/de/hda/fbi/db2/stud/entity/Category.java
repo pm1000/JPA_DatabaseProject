@@ -13,14 +13,14 @@ public class Category {
    * Object attributes.
    */
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_cat")
+  @GeneratedValue (strategy = GenerationType.AUTO)
   private int catID;
 
   @Column(unique = true)
   private String name;
 
   @OneToMany(mappedBy = "cat")
-  private ArrayList<Question> questionList;
+  private List<Question> questionList;
 
 
   /**
