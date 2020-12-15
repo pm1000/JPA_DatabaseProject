@@ -1,8 +1,8 @@
 package de.hda.fbi.db2.stud.entity;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 
 
 @Entity
@@ -13,7 +13,7 @@ public class Category {
    * Object attributes.
    */
   @Id
-  @GeneratedValue (strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int catID;
 
   @Column(unique = true)
@@ -29,7 +29,6 @@ public class Category {
   public Category() {
 
   }
-
 
 
   /**
@@ -72,15 +71,16 @@ public class Category {
   @Override
   public String toString() {
     return "Category{"
-        + "categoryName='"
-        + name
-        + '\''
-        + '}';
+             + "categoryName='"
+             + name
+             + '\''
+             + '}';
   }
 
 
   /**
    * Getter for the categoryName.
+   *
    * @return Returns the category name.
    */
   public String getCategoryName() {
@@ -98,7 +98,6 @@ public class Category {
   }
 
 
-
   /**
    * Generate a hash code for this object.
    *
@@ -108,7 +107,6 @@ public class Category {
   public int hashCode() {
     return this.catID;
   }
-
 
 
   /**
