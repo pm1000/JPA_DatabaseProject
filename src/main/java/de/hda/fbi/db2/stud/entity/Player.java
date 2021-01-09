@@ -4,6 +4,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "Player", schema = "db2")
+@NamedQueries(
+        {
+                @NamedQuery(name="Player.findByName", query = "select p from Player p where p.name = :name")
+        }
+)
 public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,5 +23,9 @@ public class Player {
 
     public Player(){
 
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

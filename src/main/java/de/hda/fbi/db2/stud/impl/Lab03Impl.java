@@ -1,9 +1,13 @@
 package de.hda.fbi.db2.stud.impl;
 
 import de.hda.fbi.db2.stud.entity.Category;
+import de.hda.fbi.db2.stud.entity.Game;
+import de.hda.fbi.db2.stud.entity.GameAnswer;
 import de.hda.fbi.db2.stud.entity.Player;
 import de.hda.fbi.db2.stud.entity.Question;
 
+import java.util.*;
+import javax.persistence.EntityTransaction;
 import java.util.*;
 
 public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
@@ -28,7 +32,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   public Object getOrCreatePlayer(String playerName) {
 
     // Try to get the player from the database.
-    Player player;
+    Player player = null;
     player = (Player) em.createNamedQuery("Player.findByName").setParameter("name", playerName).getSingleResult();
 
     // If the player is not in the database create a new one.
@@ -206,7 +210,18 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public Object createGame(Object player, java.util.List<?> questions) {
-    return null;
+    // get current time
+    Date date = new Date(System.currentTimeMillis());
+    Game game = new Game(date, (Player) player);
+
+    //create GameAnswerList
+    List<GameAnswer> gameAnswers = new ArrayList<GameAnswer>();
+    for (int i = 0; i < questions.size(); ++i){
+      gameAnswers.add(new GameAnswer(game, (Question) questions.get(i)));
+    }
+    game.setAnswerList(gameAnswers);
+
+    return game;
   }
 
 
@@ -217,7 +232,14 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public void playGame(Object game) {
-
+    // iterate trough each question and get the player answer
+    Game g = (Game) game;
+    List<GameAnswer> gameAnswers = g.getAnswerList();
+    for (int i = 0; i < gameAnswers.size(); ++i){
+      //generate a random answer
+      int answer = (int) ((Math.random() * (4 - 1)) + 1);
+      gameAnswers.get(i).setPlayerAnswer(answer);
+    }
   }
 
 
@@ -228,7 +250,40 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public void interactivePlayGame(Object game) {
+    // iterate trough each question and get the player answer
+    Game g = (Game) game;
+    for (int i = 0; i < g.getAnswerList().size(); ++i){
+      System.out.print("Frage Nr." + i + ": " + g.getAnswerList().get(i).getQuestion().getQuestionText() +
+                        "\n Antwort 1: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(0) +
+                        "\n Antwort 2: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(1) +
+                        "\n Antwort 3: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(2) +
+                        "\n Antwort 4: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(3) +
+                        "\n Ihre Antwort: \n");
 
+      // get the user input and check his input
+      Scanner scanner = new Scanner(System.in);
+      int answer = 0;
+      boolean correctInput = false;
+
+      while (!correctInput) {
+        try {
+          answer = scanner.nextInt();
+          if (answer < 1 || answer > 4)
+            throw new Exception();
+          correctInput = true;
+          } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Bitte geben Sie eine Zahl zwischen 1 und 4 ein!");
+        }
+      }
+      scanner.close();
+
+      g.getAnswerList().get(i).setPlayerAnswer(answer);
+    }
+
+    //set end of the game
+    Date date = new Date(System.currentTimeMillis());
+    g.setEnd(date);
   }
 
 
@@ -239,6 +294,32 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public void persistGame(Object game) {
+    //open transaction
+    EntityTransaction et = null;
+
+    try {
+      et = em.getTransaction();
+      et.begin();
+
+      //first step: persist the game
+      Game g = (Game) game;
+      em.persist(g);
+
+      //persist all answers
+      List<GameAnswer> gameAnswers = g.getAnswerList();
+      for (int i = 0; i < gameAnswers.size(); ++i) {
+        em.persist(gameAnswers.get(i));
+      }
+    }catch (Exception e) {
+      if (et != null && et.isActive()) {
+        et.rollback();
+      }
+
+    } finally {
+      if (em.isOpen()) {
+        em.close();
+      }
+    }
 
   }
 }

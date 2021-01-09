@@ -1,7 +1,9 @@
 package de.hda.fbi.db2.stud.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Game", schema = "db2")
@@ -14,16 +16,29 @@ public class Game {
     private Date end;
     @Column(nullable = false)
     private Player player;
+    @OneToMany(mappedBy = "game")
+    private List<GameAnswer> answerList;
 
-    private Game(int gameID, Date begin, Player player){
-        this.gameID = gameID;
+    public Game(Date begin, Player player){
         this.begin = begin;
         this.end = null;
         this.player = player;
     }
 
-    private Game(){
+    public Game(){
 
     }
 
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public void setAnswerList(List<GameAnswer> answerList) {
+        this.answerList = answerList;
+    }
+
+    public List<GameAnswer> getAnswerList() {
+        return answerList;
+    }
 }
