@@ -305,14 +305,17 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
         }
       }
 
-      a.setPlayerAnswer(answer - 1);
+      //needed to for db
+      answer = answer - 1;
+
+      a.setPlayerAnswer(answer);
 
       // Print the correect answer.
-      if (a.getQuestion().getCorrectAnswer() == answer - 1) {
+      if (a.getQuestion().getCorrectAnswer() == answer) {
         System.out.println("Die Antwort ist korrekt.");
       } else {
         System.out.println("Die Antwort ist nicht korrekt. Die korrekte Antwort ist "
-                             + a.getQuestion().getCorrectAnswer() + 1);0
+                             + (a.getQuestion().getCorrectAnswer() + 1));
       }
     }
 
