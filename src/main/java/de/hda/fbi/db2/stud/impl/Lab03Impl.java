@@ -8,7 +8,7 @@ import de.hda.fbi.db2.stud.entity.Question;
 
 import java.util.*;
 import javax.persistence.EntityTransaction;
-import java.util.*;
+import javax.persistence.NoResultException;
 
 public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
@@ -19,6 +19,12 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    * Constructor.
    */
   public Lab03Impl () {
+
+  }
+
+  @Override
+  public void init() {
+    super.init();
     em = lab02EntityManager.getEntityManager();
   }
 
@@ -33,10 +39,9 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
     // Try to get the player from the database.
     Player player = null;
-    player = (Player) em.createNamedQuery("Player.findByName").setParameter("name", playerName).getSingleResult();
-
-    // If the player is not in the database create a new one.
-    if (player == null) {
+    try {
+      player = (Player) em.createNamedQuery("Player.findByName").setParameter("name", playerName).getSingleResult();
+    } catch (NoResultException e) {
       player = new Player();
       player.setName(playerName);
       em.persist(player);
@@ -140,7 +145,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     boolean isCorrect = false;
     do {
       try {
-        questionsPerCategory = scn.nextInt();
+        questionsPerCategory = Integer.parseInt(scn.nextLine());
         isCorrect = true;
       } catch (Exception e) {
         System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
@@ -153,7 +158,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     isCorrect = false;
     do {
       try {
-        amountCategories = scn.nextInt();
+        amountCategories = Integer.parseInt(scn.nextLine());
         isCorrect = true;
       } catch (Exception e) {
         System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
@@ -176,7 +181,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       isCorrect = false;
       do {
         try {
-          catId = scn.nextInt();
+          catId = Integer.parseInt(scn.nextLine());
           isCorrect = true;
         } catch (Exception e) {
           System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
@@ -254,11 +259,11 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     Game g = (Game) game;
     for (int i = 0; i < g.getAnswerList().size(); ++i){
       System.out.print("Frage Nr." + i + ": " + g.getAnswerList().get(i).getQuestion().getQuestionText() +
-                        "\n Antwort 1: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(0) +
-                        "\n Antwort 2: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(1) +
-                        "\n Antwort 3: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(2) +
-                        "\n Antwort 4: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(3) +
-                        "\n Ihre Antwort: \n");
+                         "\n Antwort 1: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(0) +
+                         "\n Antwort 2: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(1) +
+                         "\n Antwort 3: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(2) +
+                         "\n Antwort 4: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(3) +
+                         "\n Ihre Antwort: \n");
 
       // get the user input and check his input
       Scanner scanner = new Scanner(System.in);
@@ -271,9 +276,9 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
           if (answer < 1 || answer > 4)
             throw new Exception();
           correctInput = true;
-          } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Bitte geben Sie eine Zahl zwischen 1 und 4 ein!");
+        } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("Bitte geben Sie eine Zahl zwischen 1 und 4 ein!");
         }
       }
       scanner.close();
