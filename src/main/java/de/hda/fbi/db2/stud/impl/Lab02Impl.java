@@ -3,12 +3,11 @@ package de.hda.fbi.db2.stud.impl;
 import de.hda.fbi.db2.api.Lab02EntityManager;
 import de.hda.fbi.db2.stud.entity.Category;
 import de.hda.fbi.db2.stud.entity.Question;
-
+import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.ArrayList;
 
 public class Lab02Impl extends Lab02EntityManager {
 

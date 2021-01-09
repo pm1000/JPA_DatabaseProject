@@ -27,6 +27,10 @@ public class GameAnswer {
     this.playerAnswer = playerAnswer;
   }
 
+  public int getPlayerAnswer() {
+    return playerAnswer;
+  }
+
   public void setGame(Game game) {
     this.game = game;
   }

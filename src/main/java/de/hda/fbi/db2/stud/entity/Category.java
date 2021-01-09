@@ -1,16 +1,16 @@
 package de.hda.fbi.db2.stud.entity;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 
 
 @Entity
 @Table(name = "Category", schema = "db2")
 @NamedQueries(
-  {
-    @NamedQuery(name = "Category.findAll", query = "select c from Category c")
-  }
+    {
+        @NamedQuery(name = "Category.findAll", query = "select c from Category c")
+    }
 )
 public class Category {
 

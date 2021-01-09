@@ -1,14 +1,14 @@
 package de.hda.fbi.db2.stud.impl;
 
 import de.hda.fbi.db2.stud.entity.*;
-
+import java.io.InputStreamReader;
+import java.util.*;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import java.util.*;
 
 public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
-  static private final Scanner scanner = new Scanner(System.in);
+  private Scanner scanner;
   private javax.persistence.EntityManager em;
 
 
@@ -23,6 +23,11 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   public void init() {
     super.init();
     em = lab02EntityManager.getEntityManager();
+    try {
+      scanner = new Scanner(new InputStreamReader(System.in, "UTF-8"));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -90,7 +95,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
 
   /**
-   * Get a random list of questions from the given categories and the gn amount of questions per category.
+   * Get a random list of questions from the given categories and
+   * the gn amount of questions per category.
    *
    * @param categories                   A list of categories to select questions from
    * @param amountOfQuestionsForCategory The amount of questions per category. If a category has
@@ -99,7 +105,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    * @return A random list of questions.
    */
   @Override
-  public java.util.List<?> getQuestions(java.util.List<?> categories, int amountOfQuestionsForCategory) {
+  public java.util.List<?> getQuestions(java.util.List<?> categories,
+                                        int amountOfQuestionsForCategory) {
 
     Random random = new Random();
     List<Question> questions = new ArrayList<>();
@@ -140,9 +147,6 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   @Override
   public java.util.List<?> interactiveGetQuestions() {
 
-    // Get all categories available.
-    List<Category> allCategoriesList = (List<Category>) em.createNamedQuery("Category.findAll").getResultList();
-
     // Prepare input variables.
     int questionsPerCategory = 0;
     int amountCategories = 0;
@@ -176,9 +180,13 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       }
     } while (!isCorrect);
 
+    // Get all categories available.
+    List<?> allCategoriesList = em.createNamedQuery("Category.findAll").getResultList();
+
     // print all categories with the corresponding ids and fill up a hashmap for easy access.
     Map<Integer, Category> allCategoriesMap = new HashMap<>();
-    for (Category cat : allCategoriesList) {
+    for (Object obj : allCategoriesList) {
+      Category cat = (Category) obj;
       System.out.println("[" + cat.getCatID() + "] " + cat.getCategoryName());
       allCategoriesMap.put(cat.getCatID(), cat);
     }
@@ -201,7 +209,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       } while (!isCorrect);
 
       // Check if the category is already chosen.
-      if (!allCategoriesMap.containsKey(catId) || categories.contains(allCategoriesMap.get(catId))) {
+      if (!allCategoriesMap.containsKey(catId)
+            || categories.contains(allCategoriesMap.get(catId))) {
         System.out.println("Kategorie nicht vorhanden oder schon ausgewählt.");
         i--;
       } else {
@@ -292,18 +301,18 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
           }
           correctInput = true;
         } catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("Bitte geben Sie eine Zahl zwischen 1 und 4 ein!");
+          System.out.println("Bitte geben Sie eine Zahl zwischen 1 und 4 ein:");
         }
       }
 
       a.setPlayerAnswer(answer - 1);
 
       // Print the correect answer.
-      if (a.getQuestion().getCorrectAnswer() == answer) {
+      if (a.getQuestion().getCorrectAnswer() == answer - 1) {
         System.out.println("Die Antwort ist korrekt.");
       } else {
-        System.out.println("Die Antwort ist nicht korrekt. Die korrekte Antwort ist " + a.getQuestion().getCorrectAnswer());
+        System.out.println("Die Antwort ist nicht korrekt. Die korrekte Antwort ist "
+                             + a.getQuestion().getCorrectAnswer() + 1);0
       }
     }
 

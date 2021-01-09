@@ -1,8 +1,8 @@
 package de.hda.fbi.db2.stud.entity;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Game", schema = "db2")
@@ -14,16 +14,27 @@ public class Game {
   private Date gameBegin;
   @Temporal(TemporalType.TIMESTAMP)
   private Date gameEnd;
+  @OneToOne
   private Player player;
   @OneToMany(mappedBy = "game")
   private List<GameAnswer> answerList;
 
+
+  /**
+   * Constructor.
+   *
+   * @param player The player object.
+   */
   public Game(Player player) {
     this.gameBegin = new Date(System.currentTimeMillis());;
     this.gameEnd = null;
     this.player = player;
   }
 
+
+  /**
+   * Constructor.
+   */
   public Game() {
 
   }
