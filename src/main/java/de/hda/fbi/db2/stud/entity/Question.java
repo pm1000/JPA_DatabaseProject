@@ -1,10 +1,8 @@
 package de.hda.fbi.db2.stud.entity;
 
-import org.eclipse.persistence.annotations.PrimaryKey;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 
 
 @Entity
@@ -31,10 +29,9 @@ public class Question {
   /**
    * Constructor.
    */
-  public Question(){
+  public Question() {
 
   }
-
 
 
   /**
@@ -67,14 +64,14 @@ public class Question {
   @Override
   public String toString() {
     return "Question ("
-        + questionId
-        + "): "
-        + questionText
-        + "; answers:"
-        + answers
-        + ", correctAnswer="
-        + correctAnswer
-        + '}';
+             + questionId
+             + "): "
+             + questionText
+             + "; answers:"
+             + answers
+             + ", correctAnswer="
+             + correctAnswer
+             + '}';
   }
 
 
@@ -118,7 +115,6 @@ public class Question {
   }
 
 
-
   /**
    * Getter for the category.
    *
@@ -127,7 +123,6 @@ public class Question {
   public Category getCategory() {
     return cat;
   }
-
 
 
   /**
@@ -139,7 +134,6 @@ public class Question {
   public int hashCode() {
     return this.questionId;
   }
-
 
 
   /**
