@@ -11,13 +11,12 @@ public class GameAnswer {
     @Column(nullable = false)
     private int playerAnswer;
     @Column(nullable = false)
+    @ManyToOne
     private Game game;
     @Column(nullable = false)
     private Question question;
 
-    public GameAnswer(int gameAnswerID, int playerAnswer, Game game, Question question){
-        this.gameAnswerID = gameAnswerID;
-        this.playerAnswer = playerAnswer;
+    public GameAnswer(Game game, Question question){
         this.game = game;
         this.question = question;
     }
@@ -36,5 +35,9 @@ public class GameAnswer {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 }
