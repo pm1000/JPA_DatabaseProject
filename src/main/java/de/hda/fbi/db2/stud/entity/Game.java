@@ -11,10 +11,8 @@ public class Game {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     private int gameID;
-    @Column(nullable = false)
     private Date begin;
     private Date end;
-    @Column(nullable = false)
     private Player player;
     @OneToMany(mappedBy = "game")
     private List<GameAnswer> answerList;

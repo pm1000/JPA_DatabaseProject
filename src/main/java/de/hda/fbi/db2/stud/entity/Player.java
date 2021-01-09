@@ -13,7 +13,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int playerID;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String name;
 
     public Player(int pID, String name){

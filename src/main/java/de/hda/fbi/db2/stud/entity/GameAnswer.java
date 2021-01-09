@@ -8,12 +8,10 @@ public class GameAnswer {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     private int gameAnswerID;
-    @Column(nullable = false)
     private int playerAnswer;
-    @Column(nullable = false)
     @ManyToOne
     private Game game;
-    @Column(nullable = false)
+    @OneToOne
     private Question question;
 
     public GameAnswer(Game game, Question question){
