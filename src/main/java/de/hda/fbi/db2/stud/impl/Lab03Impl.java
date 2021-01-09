@@ -5,6 +5,7 @@ import de.hda.fbi.db2.stud.entity.GameAnswer;
 import de.hda.fbi.db2.stud.entity.Player;
 import de.hda.fbi.db2.stud.entity.Question;
 
+import javax.persistence.EntityTransaction;
 import java.util.*;
 
 public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
@@ -189,14 +190,31 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public void persistGame(Object game) {
-    //first step: persist the game
-    Game g = (Game) game;
-    em.persist(g);
+    //open transaction
+    EntityTransaction et = null;
 
-    //persist all answers
-    List<GameAnswer> gameAnswers = g.getAnswerList();
-    for (int i = 0; i < gameAnswers.size(); ++i){
-      em.persist(gameAnswers.get(i));
+    try {
+      et = em.getTransaction();
+      et.begin();
+
+      //first step: persist the game
+      Game g = (Game) game;
+      em.persist(g);
+
+      //persist all answers
+      List<GameAnswer> gameAnswers = g.getAnswerList();
+      for (int i = 0; i < gameAnswers.size(); ++i) {
+        em.persist(gameAnswers.get(i));
+      }
+    }catch (Exception e) {
+      if (et != null && et.isActive()) {
+        et.rollback();
+      }
+
+    } finally {
+      if (em.isOpen()) {
+        em.close();
+      }
     }
 
   }
