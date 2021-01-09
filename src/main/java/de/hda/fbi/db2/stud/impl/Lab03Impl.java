@@ -150,13 +150,12 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   public void interactivePlayGame(Object game) {
     // iterate trough each question and get the player answer
     Game g = (Game) game;
-    List<GameAnswer> gameAnswers = g.getAnswerList();
-    for (int i = 0; i < gameAnswers.size(); ++i){
-      System.out.print("Frage Nr." + i + ": " + gameAnswers.get(i).getQuestion().getQuestionText() +
-                        "\n Antwort 1: " + gameAnswers.get(i).getQuestion().getAnswers().get(0) +
-                        "\n Antwort 2: " + gameAnswers.get(i).getQuestion().getAnswers().get(1) +
-                        "\n Antwort 3: " + gameAnswers.get(i).getQuestion().getAnswers().get(2) +
-                        "\n Antwort 4: " + gameAnswers.get(i).getQuestion().getAnswers().get(3) +
+    for (int i = 0; i < g.getAnswerList().size(); ++i){
+      System.out.print("Frage Nr." + i + ": " + g.getAnswerList().get(i).getQuestion().getQuestionText() +
+                        "\n Antwort 1: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(0) +
+                        "\n Antwort 2: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(1) +
+                        "\n Antwort 3: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(2) +
+                        "\n Antwort 4: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(3) +
                         "\n Ihre Antwort: \n");
 
       // get the user input and check his input
@@ -177,9 +176,12 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       }
       scanner.close();
 
-      gameAnswers.get(i).setPlayerAnswer(answer);
-
+      g.getAnswerList().get(i).setPlayerAnswer(answer);
     }
+
+    //set end of the game
+    Date date = new Date(System.currentTimeMillis());
+    g.setEnd(date);
   }
 
 

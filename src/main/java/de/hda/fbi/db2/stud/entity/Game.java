@@ -23,23 +23,15 @@ public class Game {
         this.begin = begin;
         this.end = null;
         this.player = player;
-        this.answerList = answerList;
     }
 
     public Game(){
 
     }
 
-    public void setBegin(Date begin) {
-        this.begin = begin;
-    }
 
     public void setEnd(Date end) {
         this.end = end;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public void setAnswerList(List<GameAnswer> answerList) {
