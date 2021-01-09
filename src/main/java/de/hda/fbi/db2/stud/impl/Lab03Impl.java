@@ -228,9 +228,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public Object createGame(Object player, java.util.List<?> questions) {
-    // get current time
-    Date date = new Date(System.currentTimeMillis());
-    Game game = new Game(date, (Player) player);
+    Game game = new Game((Player) player);
 
     //create GameAnswerList
     List<GameAnswer> gameAnswers = new ArrayList<>();
@@ -310,8 +308,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     }
 
     //set end of the game
-    Date date = new Date(System.currentTimeMillis());
-    g.setEnd(date);
+    g.setEnd();
   }
 
 

@@ -18,8 +18,8 @@ public class Game {
   @OneToMany(mappedBy = "game")
   private List<GameAnswer> answerList;
 
-  public Game(Date begin, Player player) {
-    this.gameBegin = begin;
+  public Game(Player player) {
+    this.gameBegin = new Date(System.currentTimeMillis());;
     this.gameEnd = null;
     this.player = player;
   }
@@ -29,8 +29,8 @@ public class Game {
   }
 
 
-  public void setEnd(Date end) {
-    this.gameEnd = end;
+  public void setEnd() {
+    this.gameEnd = new Date(System.currentTimeMillis());;
   }
 
   public List<GameAnswer> getAnswerList() {
