@@ -1,26 +1,21 @@
 package de.hda.fbi.db2.stud.impl;
 
-import de.hda.fbi.db2.stud.entity.Category;
-import de.hda.fbi.db2.stud.entity.Game;
-import de.hda.fbi.db2.stud.entity.GameAnswer;
-import de.hda.fbi.db2.stud.entity.Player;
-import de.hda.fbi.db2.stud.entity.Question;
+import de.hda.fbi.db2.stud.entity.*;
 
-import java.util.*;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import java.io.*;
+import java.util.*;
 
 public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
+  static private final Scanner scanner = new Scanner(System.in);
   private javax.persistence.EntityManager em;
-  static private Scanner scanner = new Scanner(System.in);
 
 
   /**
    * Constructor.
    */
-  public Lab03Impl () {
+  public Lab03Impl() {
 
   }
 
@@ -42,7 +37,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     // Try to get the player from the database.
     Player player = null;
     try {
-      player = (Player) em.createNamedQuery("Player.findByName").setParameter("name", playerName).getSingleResult();
+      player = (Player) em.createNamedQuery("Player.findByName")
+                          .setParameter("name", playerName).getSingleResult();
     } catch (NoResultException e) {
       EntityTransaction et = null;
 
@@ -67,7 +63,6 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   }
 
 
-
   /**
    * Call getOrCreatePlayer() with a user interface.
    *
@@ -81,7 +76,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
     for (boolean isCorrect = false; !isCorrect; ) {
 
-      name =  scanner.nextLine();
+      name = scanner.nextLine();
       if (!name.isEmpty() || !name.isBlank()) {
         isCorrect = true;
       } else {
@@ -92,7 +87,6 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
     return getOrCreatePlayer(name);
   }
-
 
 
   /**
@@ -108,7 +102,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   public java.util.List<?> getQuestions(java.util.List<?> categories, int amountOfQuestionsForCategory) {
 
     Random random = new Random();
-    List<Question> questions = new ArrayList<Question>();
+    List<Question> questions = new ArrayList<>();
 
     for (Object obj : categories) {
       Category cat = (Category) obj;
@@ -120,7 +114,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
         // Choose random questions
       } else {
-        List<Question> tmpQuestionList = new ArrayList<Question>();
+        List<Question> tmpQuestionList = new ArrayList<>();
 
         for (int i = 0; i < amountOfQuestionsForCategory; i++) {
           Question tmpQuestion;
@@ -141,7 +135,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   /**
    * Call getQuestions() with a user interface.
    *
-   * @return
+   * @return A list of questions.
    */
   @Override
   public java.util.List<?> interactiveGetQuestions() {
@@ -152,8 +146,6 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     // Prepare input variables.
     int questionsPerCategory = 0;
     int amountCategories = 0;
-    List<Category> categories = new ArrayList<>();
-
 
     // Get the questions per category.
     System.out.print("Anzahl der Fragen pro Kategorie: ");
@@ -175,7 +167,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     isCorrect = false;
     do {
       try {
-        amountCategories = Integer.parseInt(scanner.nextLine());
+        amountCategories = scanner.nextInt();
         if (amountCategories > 1) { // More than 2 categories.
           isCorrect = true;
         }
@@ -192,15 +184,16 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     }
 
     // Get the categories from the user.
+    List<Category> categories = new ArrayList<>();
     for (int i = 0; i < amountCategories; i++) {
-      System.out.print("Wähle deine " + (i+1) + ". Kategorie per ID: ");
+      System.out.print("Wähle deine " + (i + 1) + ". Kategorie per ID: ");
 
       // Check the input of the user.
       int catId = 0;
       isCorrect = false;
       do {
         try {
-          catId = Integer.parseInt(scanner.nextLine());
+          catId = scanner.nextInt();
           isCorrect = true;
         } catch (Exception e) {
           System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
@@ -216,10 +209,12 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       }
     }
 
+    System.out.println("\n\n############################################################");
     System.out.println("Fragen pro Kategorie: " + questionsPerCategory);
     System.out.println("Anzahl Kategorien: " + amountCategories);
     System.out.println("Ausgewählte Kategorien: " + categories.toString());
-    
+    System.out.println("############################################################\n\n");
+
     return getQuestions(categories, questionsPerCategory);
   }
 
@@ -238,9 +233,9 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     Game game = new Game(date, (Player) player);
 
     //create GameAnswerList
-    List<GameAnswer> gameAnswers = new ArrayList<GameAnswer>();
-    for (int i = 0; i < questions.size(); ++i){
-      gameAnswers.add(new GameAnswer(game, (Question) questions.get(i)));
+    List<GameAnswer> gameAnswers = new ArrayList<>();
+    for (Object question : questions) {
+      gameAnswers.add(new GameAnswer(game, (Question) question));
     }
     game.setAnswerList(gameAnswers);
 
@@ -258,10 +253,10 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     // iterate trough each question and get the player answer
     Game g = (Game) game;
     List<GameAnswer> gameAnswers = g.getAnswerList();
-    for (int i = 0; i < gameAnswers.size(); ++i){
+    for (GameAnswer gameAnswer : gameAnswers) {
       //generate a random answer
       int answer = (int) ((Math.random() * (4 - 1)) + 1);
-      gameAnswers.get(i).setPlayerAnswer(answer);
+      gameAnswer.setPlayerAnswer(answer);
     }
   }
 
@@ -275,13 +270,17 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   public void interactivePlayGame(Object game) {
     // iterate trough each question and get the player answer
     Game g = (Game) game;
-    for (int i = 0; i < g.getAnswerList().size(); ++i){
-      System.out.println("Frage Nr." + i + ": " + g.getAnswerList().get(i).getQuestion().getQuestionText() +
-                         "\n Antwort 1: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(0) +
-                         "\n Antwort 2: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(1) +
-                         "\n Antwort 3: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(2) +
-                         "\n Antwort 4: " + g.getAnswerList().get(i).getQuestion().getAnswers().get(3) +
-                         "\n Ihre Antwort: \n");
+    for (GameAnswer a : g.getAnswerList()) {
+      System.out.print("\nFrage: " + a.getQuestion().getQuestionText()
+                         + "\n Antwort 1: "
+                         + a.getQuestion().getAnswers().get(0)
+                         + "\n Antwort 2: "
+                         + a.getQuestion().getAnswers().get(1)
+                         + "\n Antwort 3: "
+                         + a.getQuestion().getAnswers().get(2)
+                         + "\n Antwort 4: "
+                         + a.getQuestion().getAnswers().get(3)
+                         + "\n Ihre Antwort: ");
 
       // get the user input and check his input
       int answer = 0;
@@ -290,8 +289,9 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       while (!correctInput) {
         try {
           answer = scanner.nextInt();
-          if (answer < 1 || answer > 4)
+          if (answer < 1 || answer > 4) {
             throw new Exception();
+          }
           correctInput = true;
         } catch (Exception e) {
           e.printStackTrace();
@@ -299,7 +299,14 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
         }
       }
 
-      g.getAnswerList().get(i).setPlayerAnswer(answer - 1);
+      a.setPlayerAnswer(answer - 1);
+
+      // Print the correect answer.
+      if (a.getQuestion().getCorrectAnswer() == answer) {
+        System.out.println("Die Antwort ist korrekt.");
+      } else {
+        System.out.println("Die Antwort ist nicht korrekt. Die korrekte Antwort ist " + a.getQuestion().getCorrectAnswer());
+      }
     }
 
     //set end of the game
@@ -328,8 +335,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
       //persist all answers
       List<GameAnswer> gameAnswers = g.getAnswerList();
-      for (int i = 0; i < gameAnswers.size(); ++i) {
-        em.persist(gameAnswers.get(i));
+      for (GameAnswer gameAnswer : gameAnswers) {
+        em.persist(gameAnswer);
       }
 
       et.commit();
@@ -337,13 +344,6 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       if (et != null && et.isActive()) {
         et.rollback();
       }
-
-    } finally {
-      if (em.isOpen()) {
-        em.close();
-      }
     }
-
-    //scanner.close();
   }
 }
