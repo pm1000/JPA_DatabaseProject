@@ -1,8 +1,10 @@
 package de.hda.fbi.db2.stud.impl;
 
+import de.hda.fbi.db2.stud.entity.Category;
 import de.hda.fbi.db2.stud.entity.Player;
+import de.hda.fbi.db2.stud.entity.Question;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
@@ -62,8 +64,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
         System.out.print("\nName nicht korrekt. Bitte erneut eingeben: ");
       }
     }
-
     scn.close();
+
     return getOrCreatePlayer(name);
   }
 
@@ -80,7 +82,35 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public java.util.List<?> getQuestions(java.util.List<?> categories, int amountOfQuestionsForCategory) {
-    return null;
+
+    Random random = new Random();
+    List<Question> questions = new ArrayList<Question>();
+
+    for (Object obj : categories) {
+      Category cat = (Category) obj;
+      List<Question> catQuestions = cat.getQuestions();
+
+      // Less questions than expected
+      if (catQuestions.size() <= amountOfQuestionsForCategory) {
+        questions.addAll(catQuestions);
+
+        // Choose random questions
+      } else {
+        List<Question> tmpQuestionList = new ArrayList<Question>();
+
+        for (int i = 0; i < amountOfQuestionsForCategory; i++) {
+          Question tmpQuestion;
+          do {
+            tmpQuestion = catQuestions.get(random.nextInt(catQuestions.size() - 1));
+          } while (tmpQuestionList.contains(tmpQuestion));
+          tmpQuestionList.add(tmpQuestion);
+        }
+
+        questions.addAll(tmpQuestionList);
+      }
+    }
+
+    return questions;
   }
 
 
@@ -91,7 +121,79 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
    */
   @Override
   public java.util.List<?> interactiveGetQuestions() {
-    return null;
+
+    // Get all categories available.
+    List<Category> allCategoriesList = (List<Category>) em.createNamedQuery("Category.findAll").getResultList();
+
+    // Prepare input variables.
+    Scanner scn = new Scanner(System.in);
+    int questionsPerCategory = 0;
+    int amountCategories = 0;
+    List<Category> categories = new ArrayList<>();
+
+    // Get the questions per category.
+    System.out.print("Anzahl der Fragen pro Kategorie: ");
+    boolean isCorrect = false;
+    do {
+      try {
+        questionsPerCategory = scn.nextInt();
+        isCorrect = true;
+      } catch (Exception e) {
+        System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
+      }
+    } while (!isCorrect);
+
+
+    // Get the amount of categories asked.
+    System.out.print("Anzahl der Fragen pro Kategorie: ");
+    isCorrect = false;
+    do {
+      try {
+        amountCategories = scn.nextInt();
+        isCorrect = true;
+      } catch (Exception e) {
+        System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
+      }
+    } while (!isCorrect);
+
+    // print all categories with the corresponding ids and fill up a hashmap for easy access.
+    Map<Integer, Category> allCategoriesMap = new HashMap<>();
+    for (Category cat : allCategoriesList) {
+      System.out.println("[" + cat.getCatID() + "] " + cat.getCategoryName());
+      allCategoriesMap.put(cat.getCatID(), cat);
+    }
+
+    // Get the categories from the user.
+    for (int i = 0; i < amountCategories; i++) {
+      System.out.print("Wähle deine " + (i+1) + ". Kategorie per ID: ");
+
+      // Check the input of the user.
+      int catId = 0;
+      isCorrect = false;
+      do {
+        try {
+          catId = scn.nextInt();
+          isCorrect = true;
+        } catch (Exception e) {
+          System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
+        }
+      } while (!isCorrect);
+
+      // Check if the category is already chosen.
+      if (!allCategoriesMap.containsKey(catId) || categories.contains(allCategoriesMap.get(catId))) {
+        System.out.println("Kategorie nicht vorhanden oder schon ausgewählt.");
+        i--;
+      } else {
+        categories.add(allCategoriesMap.get(catId));
+      }
+    }
+
+    System.out.println("Fragen pro Kategorie: " + questionsPerCategory);
+    System.out.println("Anzahl Kategorien: " + amountCategories);
+    System.out.println("Ausgewählte Kategorien: " + categories.toString());
+
+    scn.close();
+    return getQuestions(categories, questionsPerCategory);
   }
 
 

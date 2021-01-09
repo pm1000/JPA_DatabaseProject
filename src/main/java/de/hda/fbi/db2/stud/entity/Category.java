@@ -70,11 +70,7 @@ public class Category {
    */
   @Override
   public String toString() {
-    return "Category{"
-             + "categoryName='"
-             + name
-             + '\''
-             + '}';
+    return name;
   }
 
 
