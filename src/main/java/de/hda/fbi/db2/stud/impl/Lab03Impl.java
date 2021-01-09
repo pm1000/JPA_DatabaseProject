@@ -85,7 +85,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       if (!name.isEmpty() || !name.isBlank()) {
         isCorrect = true;
       } else {
-        System.out.print("\nName nicht korrekt. Bitte erneut eingeben: ");
+        System.out.print("Name nicht korrekt. Bitte erneut eingeben: ");
       }
     }
 
@@ -156,12 +156,14 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
 
     // Get the questions per category.
-    System.out.println("Anzahl der Fragen pro Kategorie: ");
+    System.out.print("Anzahl der Fragen pro Kategorie: ");
     boolean isCorrect = false;
     do {
       try {
         questionsPerCategory = scanner.nextInt();
-        isCorrect = true;
+        if (questionsPerCategory > 0) { // More than zero questions per category.
+          isCorrect = true;
+        }
       } catch (Exception e) {
         System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
       }
@@ -174,7 +176,9 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     do {
       try {
         amountCategories = Integer.parseInt(scanner.nextLine());
-        isCorrect = true;
+        if (amountCategories > 1) { // More than 2 categories.
+          isCorrect = true;
+        }
       } catch (Exception e) {
         System.out.print("Eingabe ist keine valide Zahl. Bitte Zahl eingeben: ");
       }
