@@ -7,6 +7,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "Category", schema = "db2")
+@NamedQueries(
+    {
+        @NamedQuery(name = "Category.findAll", query = "select c from Category c")
+    }
+)
 public class Category {
 
   /**
@@ -70,11 +75,7 @@ public class Category {
    */
   @Override
   public String toString() {
-    return "Category{"
-             + "categoryName='"
-             + name
-             + '\''
-             + '}';
+    return name;
   }
 
 
