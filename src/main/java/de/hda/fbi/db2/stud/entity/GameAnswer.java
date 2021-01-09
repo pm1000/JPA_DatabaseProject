@@ -25,4 +25,16 @@ public class GameAnswer {
     public GameAnswer(){
 
     }
+
+    public void setPlayerAnswer(int playerAnswer) {
+        this.playerAnswer = playerAnswer;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
 }

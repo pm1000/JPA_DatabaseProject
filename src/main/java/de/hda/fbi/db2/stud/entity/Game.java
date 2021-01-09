@@ -26,4 +26,15 @@ public class Game {
 
     }
 
+    public void setBegin(Date begin) {
+        this.begin = begin;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 }
