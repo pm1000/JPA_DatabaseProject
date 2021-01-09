@@ -11,15 +11,17 @@ public class Game {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     private int gameID;
-    private Date begin;
-    private Date end;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date gameBegin;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date gameEnd;
     private Player player;
     @OneToMany(mappedBy = "game")
     private List<GameAnswer> answerList;
 
     public Game(Date begin, Player player){
-        this.begin = begin;
-        this.end = null;
+        this.gameBegin = begin;
+        this.gameEnd = null;
         this.player = player;
     }
 
@@ -29,7 +31,7 @@ public class Game {
 
 
     public void setEnd(Date end) {
-        this.end = end;
+        this.gameEnd = end;
     }
 
     public void setAnswerList(List<GameAnswer> answerList) {
