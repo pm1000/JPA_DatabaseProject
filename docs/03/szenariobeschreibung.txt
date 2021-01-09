@@ -1,0 +1,29 @@
+Szenariobeschreibung "Wissenstest spielen"
+------------------------------------------
+
+Akteur:     Spieler
+Auslöser:   Spieler startet Spiel Wissenstest
+
+
+Ablauf:
+    1.  Kurze Spielbeschreibung wird angezeigt.
+    2.  Der Spieler soll seinen Spielernamen eingeben, unter dem das Spiel gespeichert werden soll.
+    3.  Der Spieler soll eine Anzahl von Fragen pro Kategorie eingeben (Anzahl > 0), die er gestellt bekommen möchte.
+    4a. Der Spieler soll die Anzahl an Kategorien, die er haben möchte eingeben (Anzahl > 2).
+    4b. Eine Liste von Kategorien samt ID wird dem Spieler ausgegeben. Er soll mit den IDs die Kategorien auswählen.
+    5.  Der Spieler bekommt seine Eingaben in einem kurzem Text bestätigt und eine Meldung, dass das Spiel beginnt.
+
+    solange Fragen in dem Spiel existieren {
+       6. Die Frage und Antwortmöglichkeiten werden ausgegeben.
+       7. Der Spieler soll eine Antwortmäglichkeit mittels 1-4 eingeben und bestätigen.
+       8. Der Spieler bekommt eine Anzeige, ob seine Antwort korrekt ist.
+    }
+
+    9.  Der Spieler bekommt über eine Bildschirmausgabe mitgeteilt, dass das Spiel beendet ist.
+
+
+Mögliche Zwischenfälle:
+    3.  Anzahl <= 0 ("Null") wird eingegeben: Der Spieler wird aufgefordert erneut eine Zahl einzugeben.
+    4a. Anzahl < 2 wird eingegeben: Der Spieler wird aufgefordert erneut eine Zahl einzugeben.
+    4b. Eingebene Kategorie ID existiert nicht: Der Spieler soll erneut eine Kategorie auswählen.
+    7.  Spieler wählt eine ungültige Antwort aus (<1 oder >4): Der Spieler soll erneut auswählen.
