@@ -7,7 +7,6 @@ import de.hda.fbi.db2.stud.entity.GameAnswer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,17 +41,15 @@ public class Lab04Impl extends Lab04MassData {
       // Start the transaction.
       et = em.getTransaction();
       et.begin();
-      System.out.println("Start of transaction. " + Instant.now());
 
       // Load the categories.
       List<?> allCategoriesList = em.createNamedQuery("Category.findAll").getResultList();
 
       // 10.000 Player.
       for (int i = 0; i < 10000; i++) {
-
+        long time = System.currentTimeMillis();
         // Get the player
         Object player = lab03Game.getOrCreatePlayer("User_" + i);
-        System.out.println("Start of player" + i + ". " + Instant.now());
 
         // For every player play 100 games.
         for (int o = 0; o < 100; o++) {
@@ -73,11 +70,11 @@ public class Lab04Impl extends Lab04MassData {
             em.persist(gameAnswer);
           }
         }
+        System.out.println("Player " + i + " " +  (System.currentTimeMillis() - time));
       }
 
       // Commit the transaction.
       et.commit();
-      System.out.println("Start of Commit. " + Instant.now());
 
     } catch (Exception e) {
       if (et != null && et.isActive()) {
@@ -87,7 +84,6 @@ public class Lab04Impl extends Lab04MassData {
 
       // Close the entity manager
       em.close();
-      System.out.println("Finished. " + Instant.now());
     }
   }
 
