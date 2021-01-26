@@ -24,7 +24,7 @@ public class Category {
   @Column(unique = true)
   private String name;
 
-  @OneToMany(mappedBy = "cat")
+  @OneToMany(mappedBy = "cat", fetch = FetchType.EAGER)
   private List<Question> questionList;
 
 

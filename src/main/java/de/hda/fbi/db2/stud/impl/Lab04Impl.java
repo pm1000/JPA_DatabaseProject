@@ -7,6 +7,7 @@ import de.hda.fbi.db2.stud.entity.GameAnswer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -41,17 +42,17 @@ public class Lab04Impl extends Lab04MassData {
       // Start the transaction.
       et = em.getTransaction();
       et.begin();
-      System.out.println("Start of transaction.");
+      System.out.println("Start of transaction. " + Instant.now());
 
       // Load the categories.
-      Category[] allCategoriesList = (Category[]) em.createNamedQuery("Category.findAll").getResultList().toArray();
+      List<?> allCategoriesList = em.createNamedQuery("Category.findAll").getResultList();
 
       // 10.000 Player.
       for (int i = 0; i < 10000; i++) {
 
         // Get the player
         Object player = lab03Game.getOrCreatePlayer("User_" + i);
-        System.out.println("Start of player" + i + ".");
+        System.out.println("Start of player" + i + ". " + Instant.now());
 
         // For every player play 100 games.
         for (int o = 0; o < 100; o++) {
@@ -60,7 +61,7 @@ public class Lab04Impl extends Lab04MassData {
           List<Category> categories = getRandomCategoriesAsList(allCategoriesList);
 
           // Get the questions
-          List<?> questions = lab03Game.getQuestions(categories, 10);
+          List<?> questions = lab03Game.getQuestions(categories, 3);
 
           // Create the game
           Game game = (Game) lab03Game.createGame(player, questions);
@@ -76,7 +77,7 @@ public class Lab04Impl extends Lab04MassData {
 
       // Commit the transaction.
       et.commit();
-      System.out.println("Start of Commit.");
+      System.out.println("Start of Commit. " + Instant.now());
 
     } catch (Exception e) {
       if (et != null && et.isActive()) {
@@ -86,7 +87,7 @@ public class Lab04Impl extends Lab04MassData {
 
       // Close the entity manager
       em.close();
-      System.out.println("Finished.");
+      System.out.println("Finished. " + Instant.now());
     }
   }
 
@@ -96,7 +97,7 @@ public class Lab04Impl extends Lab04MassData {
    *
    * @return A list of random categories.
    */
-  private List<Category> getRandomCategoriesAsList(Category[] allCategories) {
+  private List<Category> getRandomCategoriesAsList(List<?> allCategories) {
     // Create the return list.
     List<Category> cats = new ArrayList<>();
     Category c;
@@ -105,7 +106,7 @@ public class Lab04Impl extends Lab04MassData {
     for (int i = 0; i < 6; i++) {
       // Check for this category.
       do {
-        c = allCategories[r.nextInt(allCategories.length - 1)];
+        c = (Category) allCategories.get(r.nextInt(allCategories.size() - 1));
       } while (cats.contains(c));
       cats.add(c);
     }
