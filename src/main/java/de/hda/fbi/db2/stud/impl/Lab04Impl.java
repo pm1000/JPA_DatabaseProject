@@ -3,7 +3,6 @@ package de.hda.fbi.db2.stud.impl;
 import de.hda.fbi.db2.api.Lab04MassData;
 import de.hda.fbi.db2.stud.entity.Category;
 import de.hda.fbi.db2.stud.entity.Game;
-import de.hda.fbi.db2.stud.entity.GameAnswer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -33,13 +32,15 @@ public class Lab04Impl extends Lab04MassData {
   @Override
   public void createMassData() {
 
+    final int FLUSH_AFTER_X_PLAYERS = 1000;
+
     // Get an entityManager.
     EntityManager em = lab02EntityManager.getEntityManager();
     EntityTransaction et = null;
 
     // Logging.
     long allTime = System.currentTimeMillis();
-    long playerTime = System.currentTimeMillis();
+    long massDataTime = System.currentTimeMillis();
     System.out.println("Start Transaction.");
 
     try {
@@ -67,24 +68,24 @@ public class Lab04Impl extends Lab04MassData {
 
           // Create the game
           Game game = (Game) lab03Game.createGame(player, questions);
+          long timeRandom = r.nextInt(1000*60*60*24*12); // 100ms per second, 60 seconds per minute, ...
+          game.setStart(System.currentTimeMillis() - timeRandom);
+          game.setEnd(System.currentTimeMillis() - timeRandom + 300000);
           lab03Game.playGame(game);
 
           // Persist everything.
           em.persist(game);
-          for (GameAnswer gameAnswer : game.getAnswerList()) {
-            em.persist(gameAnswer);
-          }
         }
 
 
         // Flush after 1000 player
-        if (i % 1000 == 999) {
-          System.out.println("End MassData after " + (System.currentTimeMillis() - playerTime) + "ms.");
-          playerTime = System.currentTimeMillis();
+        if (i % FLUSH_AFTER_X_PLAYERS == (FLUSH_AFTER_X_PLAYERS - 1)) {
+          System.out.println("End MassData after " + (System.currentTimeMillis() - massDataTime) + "ms.");
           long flushTime = System.currentTimeMillis();
           em.flush();
           em.clear();
           System.out.println("End Flush after " + (System.currentTimeMillis() - flushTime) + "ms.");
+          massDataTime = System.currentTimeMillis();
         }
       }
 

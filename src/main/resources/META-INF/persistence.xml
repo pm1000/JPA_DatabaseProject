@@ -11,7 +11,6 @@
         <class>de.hda.fbi.db2.stud.entity.Question</class>
         <class>de.hda.fbi.db2.stud.entity.Player</class>
         <class>de.hda.fbi.db2.stud.entity.Game</class>
-        <class>de.hda.fbi.db2.stud.entity.GameAnswer</class>
         <!-- this must be provided -->
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://postgres.fbi.h-da.de:5432/styabril"/>
@@ -43,7 +42,6 @@
         <class>de.hda.fbi.db2.stud.entity.Question</class>
         <class>de.hda.fbi.db2.stud.entity.Player</class>
         <class>de.hda.fbi.db2.stud.entity.Game</class>
-        <class>de.hda.fbi.db2.stud.entity.GameAnswer</class>
         <!-- this must be provided -->
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/dbadmin"/>
