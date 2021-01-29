@@ -37,6 +37,11 @@ public class Lab04Impl extends Lab04MassData {
     EntityManager em = lab02EntityManager.getEntityManager();
     EntityTransaction et = null;
 
+    // Logging.
+    long allTime = System.currentTimeMillis();
+    long playerTime = System.currentTimeMillis();
+    System.out.println("Start Transaction.");
+
     try {
       // Start the transaction.
       et = em.getTransaction();
@@ -47,7 +52,7 @@ public class Lab04Impl extends Lab04MassData {
 
       // 10.000 Player.
       for (int i = 0; i < 10000; i++) {
-        long time = System.currentTimeMillis();
+
         // Get the player
         Object player = lab03Game.getOrCreatePlayer("User_" + i);
 
@@ -70,7 +75,17 @@ public class Lab04Impl extends Lab04MassData {
             em.persist(gameAnswer);
           }
         }
-        System.out.println("Player " + i + " " +  (System.currentTimeMillis() - time));
+
+
+        // Flush after 1000 player
+        if (i % 1000 == 999) {
+          System.out.println("End MassData after " + (System.currentTimeMillis() - playerTime) + "ms.");
+          playerTime = System.currentTimeMillis();
+          long flushTime = System.currentTimeMillis();
+          em.flush();
+          em.clear();
+          System.out.println("End Flush after " + (System.currentTimeMillis() - flushTime) + "ms.");
+        }
       }
 
       // Commit the transaction.
@@ -80,7 +95,11 @@ public class Lab04Impl extends Lab04MassData {
       if (et != null && et.isActive()) {
         et.rollback();
       }
+      e.printStackTrace();
     } finally {
+
+      // Logging.
+      System.out.println("End Transaction after " +  (System.currentTimeMillis() - allTime) + "ms.");
 
       // Close the entity manager
       em.close();

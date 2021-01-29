@@ -14,7 +14,7 @@ public class Game {
   private Date gameBegin;
   @Temporal(TemporalType.TIMESTAMP)
   private Date gameEnd;
-  @OneToOne
+  @OneToOne(cascade = CascadeType.PERSIST)
   private Player player;
   @OneToMany(mappedBy = "game")
   private List<GameAnswer> answerList;

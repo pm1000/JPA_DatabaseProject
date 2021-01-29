@@ -40,23 +40,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       player = (Player) em.createNamedQuery("Player.findByName")
                           .setParameter("name", playerName).getSingleResult();
     } catch (NoResultException e) {
-      //EntityTransaction et = null;
-
-      //try {
-        //et = em.getTransaction();
-        //et.begin();
         player = new Player();
         player.setName(playerName);
-        em.persist(player);
-
-        //et.commit();
-
-      //} catch (Exception ex) {
-        //if (et != null && et.isActive()) {
-        //  et.rollback();
-        //}
-
-      //}
     }
 
     return player;

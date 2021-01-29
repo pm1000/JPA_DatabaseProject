@@ -1,0 +1,22 @@
+############################################################
+Länge Massendatengenerierung:
+- Ohne Multithreading: 7-10min
+- Mit Multithreading: bester Wert (2-3min)
+
+
+############################################################
+Schnellere Erzeugung der Daten:
+Allgemein:
+- Vermeidung von Auto-generated Sachen
+
+Multithreading:
+- viele kleine Transaction (um Warten durch andere Tabellen-Locks zu vermeiden)
+- kein flush und clear
+
+Bei Single-Thread:
+- clear und flush (alle 100/500/1000 Werte)
+- Blockweises Inserten
+- durchgehende Transaktion (nur 1x paralleles Zugreifen auf Tabelle)
+############################################################
+
+
