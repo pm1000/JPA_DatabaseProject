@@ -3,6 +3,7 @@ package de.hda.fbi.db2.stud.impl;
 import de.hda.fbi.db2.api.Lab04MassData;
 import de.hda.fbi.db2.stud.entity.Category;
 import de.hda.fbi.db2.stud.entity.Game;
+import org.eclipse.persistence.internal.libraries.asm.Type;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -105,6 +106,8 @@ public class Lab04Impl extends Lab04MassData {
       // Close the entity manager
       em.close();
     }
+
+    testQueries();
   }
 
 
@@ -128,5 +131,46 @@ public class Lab04Impl extends Lab04MassData {
     }
 
     return cats;
+  }
+
+
+
+  /**
+   * Testqueries.
+   *
+   */
+  private void testQueries() {
+    EntityManager em = lab02EntityManager.getEntityManager();
+    EntityTransaction et = null;
+
+    try {
+      et = em.getTransaction();
+      et.begin();
+
+      // Number of Players.
+      long numOfPlayers = (long) em.createQuery("select count(p) from Player p").getSingleResult();
+      System.out.println("Anzahl der Spieler: " + numOfPlayers);
+
+      // Number of Games.
+      long numOfGames = (long) em.createQuery("select count(g) from Game g").getSingleResult();
+      System.out.println("Anzahl der Spiele: " + numOfGames);
+
+      // Answers.
+      System.out.println("Antworten: ");
+      List<?> games = em.createQuery("select g.gameId, size(g.playerQuestionAnswer) from Game g order by g.gameId").getResultList();
+      for (Object game : games) {
+        Object[] gameArray = (Object[]) game;
+        System.out.println("Spiel: " + ((int) gameArray[0]) + ":\t Anzahl an Antworten: " + ((int) gameArray[1]));
+      }
+
+      et.commit();
+    } catch (Exception e) {
+      if (et != null && et.isActive()) {
+        et.rollback();
+      }
+      e.printStackTrace();
+    } finally {
+      em.close();
+    }
   }
 }
