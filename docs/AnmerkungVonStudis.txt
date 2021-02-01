@@ -1,0 +1,5 @@
+zu Feedback 3:
+
+- Das Klassendiagramm haben wir angepasst und im Ordner docs/04 abgelegt.
+- Den Fehler zu Anzahl der Kategorien konnten wir leider nicht reproduzieren. Bei einer Eingabe von 1
+    wird bei uns eine Ausgabe gezeigt mit der Aufforderung eine Zahl erneut einzugeben.

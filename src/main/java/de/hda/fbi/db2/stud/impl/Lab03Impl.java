@@ -4,6 +4,7 @@ import de.hda.fbi.db2.stud.entity.*;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.Map.Entry;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 
@@ -35,28 +36,13 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
   public Object getOrCreatePlayer(String playerName) {
 
     // Try to get the player from the database.
-    Player player = null;
+    Player player;
     try {
       player = (Player) em.createNamedQuery("Player.findByName")
                           .setParameter("name", playerName).getSingleResult();
     } catch (NoResultException e) {
-      EntityTransaction et = null;
-
-      try {
-        et = em.getTransaction();
-        et.begin();
-        player = new Player();
-        player.setName(playerName);
-        em.persist(player);
-
-        et.commit();
-
-      } catch (Exception ex) {
-        if (et != null && et.isActive()) {
-          et.rollback();
-        }
-
-      }
+      player = new Player();
+      player.setName(playerName);
     }
 
     return player;
@@ -253,9 +239,9 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
     Game game = new Game((Player) player);
 
     // Create GameAnswerList
-    List<GameAnswer> gameAnswers = new ArrayList<>();
+    Map<Question, Integer> gameAnswers = new HashMap<>();
     for (Object question : questions) {
-      gameAnswers.add(new GameAnswer(game, (Question) question));
+      gameAnswers.put((Question) question, -1);
     }
     game.setAnswerList(gameAnswers);
 
@@ -273,12 +259,13 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
     // Iterate trough each question and get the player answer.
     Game g = (Game) game;
-    List<GameAnswer> gameAnswers = g.getAnswerList();
+    Map<Question, Integer> gameQuestions = g.getAnswerList();
 
-    for (GameAnswer gameAnswer : gameAnswers) {
+    for (Entry<Question, Integer> entry : gameQuestions.entrySet()) {
+
       // Generate a random answer.
       int answer = (int) ((Math.random() * (4 - 1)) + 1);
-      gameAnswer.setPlayerAnswer(answer);
+      entry.setValue(answer);
     }
   }
 
@@ -298,16 +285,17 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
 
       // Iterate trough each question and get the player answer
       Game g = (Game) game;
-      for (GameAnswer a : g.getAnswerList()) {
-        System.out.print("\nFrage: " + a.getQuestion().getQuestionText()
+      for (Entry<Question, Integer> currentQuestion : g.getAnswerList().entrySet()) {
+        //for (GameAnswer a : g.getAnswerList()) {
+        System.out.print("\nFrage: " + currentQuestion.getKey().getQuestionText()
                            + "\n Antwort 1: "
-                           + a.getQuestion().getAnswers().get(0)
+                           + currentQuestion.getKey().getAnswers().get(0)
                            + "\n Antwort 2: "
-                           + a.getQuestion().getAnswers().get(1)
+                           + currentQuestion.getKey().getAnswers().get(1)
                            + "\n Antwort 3: "
-                           + a.getQuestion().getAnswers().get(2)
+                           + currentQuestion.getKey().getAnswers().get(2)
                            + "\n Antwort 4: "
-                           + a.getQuestion().getAnswers().get(3)
+                           + currentQuestion.getKey().getAnswers().get(3)
                            + "\n Ihre Antwort: ");
 
         // get the user input and check his input
@@ -329,19 +317,19 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
         //needed to for db
         answer = answer - 1;
 
-        a.setPlayerAnswer(answer);
+        currentQuestion.setValue(answer);
 
         // Print the correect answer.
-        if (a.getQuestion().getCorrectAnswer() == answer) {
+        if (currentQuestion.getKey().getCorrectAnswer() == answer) {
           System.out.println("Die Antwort ist korrekt.");
         } else {
           System.out.println("Die Antwort ist nicht korrekt. Die korrekte Antwort ist "
-                               + (a.getQuestion().getCorrectAnswer() + 1));
+                               + (currentQuestion.getKey().getCorrectAnswer() + 1));
         }
       }
 
       //set end of the game
-      g.setEnd();
+      g.setEnd(System.currentTimeMillis());
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -363,16 +351,11 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       et = em.getTransaction();
       et.begin();
 
-      // First step: persist the game
+      // Persist the game
       Game g = (Game) game;
       em.persist(g);
 
-      // Persist all answers
-      List<GameAnswer> gameAnswers = g.getAnswerList();
-      for (GameAnswer gameAnswer : gameAnswers) {
-        em.persist(gameAnswer);
-      }
-
+      // Commit
       et.commit();
     } catch (Exception e) {
       if (et != null && et.isActive()) {

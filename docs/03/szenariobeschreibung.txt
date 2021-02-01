@@ -23,6 +23,7 @@ Ablauf:
 
 
 Mögliche Zwischenfälle:
+    2a. Sollte der Spielername bereits in der Datenbank vorhanden sein, so wird das Objekt aus der DB benutzt.
     3.  Anzahl <= 0 ("Null") wird eingegeben: Der Spieler wird aufgefordert erneut eine Zahl einzugeben.
     4a. Anzahl < 2 wird eingegeben: Der Spieler wird aufgefordert erneut eine Zahl einzugeben.
     4b. Eingebene Kategorie ID existiert nicht: Der Spieler soll erneut eine Kategorie auswählen.
