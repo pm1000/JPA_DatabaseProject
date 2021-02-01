@@ -33,6 +33,8 @@ public class Lab04Impl extends Lab04MassData {
   public void createMassData() {
 
     final int FlushAfterXPlayers = 1000;
+    final int NumPlayers = 10000;
+    final int NumGamesPerPlayer = 100;
 
     // Get an entityManager.
     EntityManager em = lab02EntityManager.getEntityManager();
@@ -52,13 +54,13 @@ public class Lab04Impl extends Lab04MassData {
       List<?> allCategoriesList = em.createNamedQuery("Category.findAll").getResultList();
 
       // 10.000 Player.
-      for (int i = 0; i < 10000; i++) {
+      for (int i = 0; i < NumPlayers; i++) {
 
         // Get the player
         Object player = lab03Game.getOrCreatePlayer("User_" + i);
 
         // For every player play 100 games.
-        for (int o = 0; o < 100; o++) {
+        for (int o = 0; o < NumGamesPerPlayer; o++) {
 
           // Get random categories
           List<Category> categories = getRandomCategoriesAsList(allCategoriesList);
@@ -113,6 +115,7 @@ public class Lab04Impl extends Lab04MassData {
       em.close();
     }
 
+    // Uncomment to test the queries.
     testQueries();
   }
 
@@ -155,19 +158,23 @@ public class Lab04Impl extends Lab04MassData {
 
       // Number of Players.
       long numOfPlayers = (long) em.createQuery("select count(p) from Player p").getSingleResult();
-      System.out.println("Anzahl der Spieler: " + numOfPlayers);
 
       // Number of Games.
       long numOfGames = (long) em.createQuery("select count(g) from Game g").getSingleResult();
-      System.out.println("Anzahl der Spiele: " + numOfGames);
 
       // Answers.
       System.out.println("Antworten: ");
-      List<?> games = em.createQuery("select g.gameId, size(g.playerQuestionAnswer) from Game g order by g.gameId").getResultList();
+      List<?> games = em.createQuery("select size(g.playerQuestionAnswer) from Game g").getResultList();
+      long avgNumPlayerQuestions = 0;
       for (Object game : games) {
-        Object[] gameArray = (Object[]) game;
-        System.out.println("Spiel: " + ((int) gameArray[0]) + ":\t Anzahl an Antworten: " + ((int) gameArray[1]));
+        avgNumPlayerQuestions += (int) game;
       }
+
+      // Print information.
+      System.out.println("Anzahl der Spieler: " + numOfPlayers);
+      System.out.println("Anzahl der Spiele: " + numOfGames);
+      System.out.println("Anzahl der Antworten gesamt: " + avgNumPlayerQuestions);
+
 
       et.commit();
     } catch (Exception e) {

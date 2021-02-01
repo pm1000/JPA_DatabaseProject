@@ -1,18 +1,41 @@
 ############################################################
 Länge Massendatengenerierung (Gesamtdauer inkl. Einfügen in Datenbank):
-lokal:
+Lokal:
 Flush nach je 1000 Spielern:     399s Dauer
 Flush nach je  500 Spielern:     402s Dauer
 Flush nach je  100 Spielern:     413s Dauer
 -->Gesamtdauer zum Einfügen ca. 6:30
 
+
+
 ############################################################
 Schnellere Abarbeitung/Fertigstellung der Transaktion:
 - Vermeidung von Auto-generated Sachen (ansonsten funktionieren Batch-Operationen nicht richtig)
 - clear() und flush() (alle 100/500/1000 Werte) (ansonsten kann es zu Ram-Problemen kommen, schneller als commit)
-- Blockweises Inserten
+- Blockweises Inserten (mit Batches):
+    - erst keine Veränderung, da Treiber das Batch-Schreiben nicht richtig umsetetzt bei Auto-increment-Typen
+        (wir hatten ursprünglich eine Entity GameAnswer mit Auto-Increment)
+        Quelle unseres Wissens: https://medium.com/@jerolba/persisting-fast-in-database-1af4a281e3a
+    - umgeändert zu Map (Batch-Insert funktioniert hier auch richtig)
 - durchgehende Transaktion (nur 1x paralleles Zugreifen auf Tabelle), öffnen: vor dem generieren der Massendaten,
   schließen: nachdem alles erzeugt wurde
+
+
+
+
+############################################################
+Batch-Writing:
+
+Bei einem Batch-Writing werden viele aufeinanderfolgende Inserts zu einem Paket zusammengefasst
+und am Stück auf die Datenbank geladen.
+Ohne ein Batch werden die einzelnen Datensätze einzeln hochgeladen und verarbeitet.
+Mit Batch reduziert sich die Zahl der Datenpakete, da die einzelnen Datensätze zuerst zu größeren Datenpaketen
+gebündelt werden und auf einmal verschickt werden.
+
+Die Transportzeit ist bei einem Datenbankzugriff verhältnismäßig am größten (im Millisekundenbereich).
+Mit Batch kann man eben diese Zeit verringern.
+
+
 ############################################################
 
 flush(): Bewirkt, dass der aktuelle Persistenzkontext mit der Datenbank synchronisiert wird.
@@ -27,3 +50,18 @@ commit(): Alle Änderungen an der Datenbank, die während der Transaktion durchg
 
 rollback(): Alle Änderungen an der Datenbank, die nicht durch einen Commit bestätigt wurden, werden rückgängig
     gemacht (auf den Zustand des letzten Commits).
+
+
+##############################################################
+Queries (bei 10000 Spielern getestet):
+
+Query: "select count(p) from Player p"
+Ausgabe: "Anzahl der Spieler: 10000"
+
+Query: "select count(g) from Game g"
+Ausgabe: "Anzahl der Spiele: 1000000"
+
+Query: "select size(g.playerQuestionAnswer) from Game g"
+Ausgabe: (In Java aufgerechnet) "Anzahl der Antworten gesamt: 13564311"
+
+
