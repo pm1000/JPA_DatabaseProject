@@ -1,23 +1,29 @@
 ############################################################
-Länge Massendatengenerierung:
+Länge Massendatengenerierung (Gesamtdauer inkl. Einfügen in Datenbank):
 lokal:
-Flush bei 1000 Spielern:     399s Dauer
-Flush bei 500 Spielern:      402s Dauer
-Flush bei 100 Spielern:      413s Dauer
-
-
+Flush nach je 1000 Spielern:     399s Dauer
+Flush nach je  500 Spielern:     402s Dauer
+Flush nach je  100 Spielern:     413s Dauer
+-->Gesamtdauer zum Einfügen ca. 6:30
 
 ############################################################
 Schnellere Abarbeitung/Fertigstellung der Transaktion:
-- Vermeidung von Auto-generated Sachen
-- clear() und flush() (alle 100/500/1000 Werte)
+- Vermeidung von Auto-generated Sachen (ansonsten funktionieren Batch-Operationen nicht richtig)
+- clear() und flush() (alle 100/500/1000 Werte) (ansonsten kann es zu Ram-Problemen kommen, schneller als commit)
 - Blockweises Inserten
-- durchgehende Transaktion (nur 1x paralleles Zugreifen auf Tabelle)
+- durchgehende Transaktion (nur 1x paralleles Zugreifen auf Tabelle), öffnen: vor dem generieren der Massendaten,
+  schließen: nachdem alles erzeugt wurde
 ############################################################
 
-flush(): Bewirkt, dass der aktuelle persistenzkontext mit der datenbank synchronisiert wird.
-In einer Transaktion verbleiben auf den hochgeladenen oder selektierten Spalten ein Lock bis Ende der Transaktion.
+flush(): Bewirkt, dass der aktuelle Persistenzkontext mit der Datenbank synchronisiert wird.
+    In einer Transaktion verbleiben auf den hochgeladenen oder selektierten Spalten ein Lock bis Ende der Transaktion.
+    Kann bei mehreren Nutzern zu Problemen führen (lange Locks).
 
 clear(): Alle objekte aus dem Persistenzkontext werden detached. Ist keine Referenz mehr auf dem Objekt sonst,
-wird es aus dem RAM entfernt.
+    wird es aus dem RAM entfernt.
 
+commit(): Alle Änderungen an der Datenbank, die während der Transaktion durchgeführt wurden, werden übernommen und
+    bleiben so erhalten. Hebt sämtliche innerhalb der Transaktion verursachten Locks auf.
+
+rollback(): Alle Änderungen an der Datenbank, die nicht durch einen Commit bestätigt wurden, werden rückgängig
+    gemacht (auf den Zustand des letzten Commits).
