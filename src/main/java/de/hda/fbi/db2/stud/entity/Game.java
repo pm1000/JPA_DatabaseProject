@@ -67,7 +67,8 @@ public class Game {
 
 
   /**
-   * Get the list of questions for this game. -1 as value means that the player has not given an answer yet.
+   * Get the list of questions for this game.
+   * -1 as value means that the player has not given an answer yet.
    * @return A map of Question keys and Integer values with the questions.
    */
   public Map<Question, Integer> getAnswerList() {

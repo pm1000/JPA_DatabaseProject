@@ -3,19 +3,19 @@ package de.hda.fbi.db2.stud.impl;
 import de.hda.fbi.db2.api.Lab04MassData;
 import de.hda.fbi.db2.stud.entity.Category;
 import de.hda.fbi.db2.stud.entity.Game;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
 
 public class Lab04Impl extends Lab04MassData {
 
   /**
    * Class attributes.
    */
-  private final Random r = new Random();
+  private final Random randomNumber = new Random();
 
 
   /**
@@ -32,7 +32,7 @@ public class Lab04Impl extends Lab04MassData {
   @Override
   public void createMassData() {
 
-    final int FLUSH_AFTER_X_PLAYERS = 1000;
+    final int FlushAfterXPlayers = 1000;
 
     // Get an entityManager.
     EntityManager em = lab02EntityManager.getEntityManager();
@@ -68,7 +68,8 @@ public class Lab04Impl extends Lab04MassData {
 
           // Create the game
           Game game = (Game) lab03Game.createGame(player, questions);
-          long timeRandom = r.nextInt(1000*60*60*24*12); // 100ms per second, 60 seconds per minute, ...
+          // 100ms per second, 60 seconds per minute, ...
+          long timeRandom = randomNumber.nextInt(1000 * 60 * 60 * 24 * 12);
           game.setStart(System.currentTimeMillis() - timeRandom);
           game.setEnd(System.currentTimeMillis() - timeRandom + 300000);
           lab03Game.playGame(game);
@@ -79,12 +80,16 @@ public class Lab04Impl extends Lab04MassData {
 
 
         // Flush after 1000 player
-        if (i % FLUSH_AFTER_X_PLAYERS == (FLUSH_AFTER_X_PLAYERS - 1)) {
-          System.out.println("End MassData after " + (System.currentTimeMillis() - massDataTime) + "ms.");
+        if (i % FlushAfterXPlayers == (FlushAfterXPlayers - 1)) {
+          System.out.println("End MassData after "
+                               + (System.currentTimeMillis() - massDataTime)
+                               + "ms.");
           long flushTime = System.currentTimeMillis();
           em.flush();
           em.clear();
-          System.out.println("End Flush after " + (System.currentTimeMillis() - flushTime) + "ms.");
+          System.out.println("End Flush after "
+                               + (System.currentTimeMillis() - flushTime)
+                               + "ms.");
           massDataTime = System.currentTimeMillis();
         }
       }
@@ -100,7 +105,9 @@ public class Lab04Impl extends Lab04MassData {
     } finally {
 
       // Logging.
-      System.out.println("End Transaction after " +  (System.currentTimeMillis() - allTime) + "ms.");
+      System.out.println("End Transaction after "
+                           +  (System.currentTimeMillis() - allTime)
+                           + "ms.");
 
       // Close the entity manager
       em.close();
@@ -122,7 +129,7 @@ public class Lab04Impl extends Lab04MassData {
     for (int i = 0; i < 6; i++) {
       // Check for this category.
       do {
-        c = (Category) allCategories.get(r.nextInt(allCategories.size() - 1));
+        c = (Category) allCategories.get(randomNumber.nextInt(allCategories.size() - 1));
       } while (cats.contains(c));
       cats.add(c);
     }

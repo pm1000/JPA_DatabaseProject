@@ -41,8 +41,8 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       player = (Player) em.createNamedQuery("Player.findByName")
                           .setParameter("name", playerName).getSingleResult();
     } catch (NoResultException e) {
-        player = new Player();
-        player.setName(playerName);
+      player = new Player();
+      player.setName(playerName);
     }
 
     return player;
@@ -286,7 +286,7 @@ public class Lab03Impl extends de.hda.fbi.db2.api.Lab03Game {
       // Iterate trough each question and get the player answer
       Game g = (Game) game;
       for (Entry<Question, Integer> currentQuestion : g.getAnswerList().entrySet()) {
-      //for (GameAnswer a : g.getAnswerList()) {
+        //for (GameAnswer a : g.getAnswerList()) {
         System.out.print("\nFrage: " + currentQuestion.getKey().getQuestionText()
                            + "\n Antwort 1: "
                            + currentQuestion.getKey().getAnswers().get(0)
