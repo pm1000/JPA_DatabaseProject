@@ -1,6 +1,8 @@
 package de.hda.fbi.db2.controller;
 
 import de.hda.fbi.db2.api.Lab03Game;
+import de.hda.fbi.db2.stud.impl.Lab05Impl;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -68,7 +70,9 @@ public class MenuController {
   }
 
   private void analyzeData() {
-
+    Lab05Impl lab05 = new Lab05Impl();
+    lab05.setLab02(controller.getLab02EntityManager());
+    lab05.startMenu();
   }
 
   private void createMassData() {
