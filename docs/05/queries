@@ -1,114 +1,95 @@
 query 1:
 SELECT DISTINCT t0.NAME FROM db2.Player t0, db2.Game t1 WHERE (((t1.GAMEBEGIN > ?) AND (t1.GAMEEND < ?)) AND (t0.PLAYERID = t1.PLAYER_PLAYERID))
 	bind => [2021-02-01 06:52:00.0, 2021-02-08 19:59:51.144]
+Erklärung Explain:
+    - 1. sequentieller Scan der Tabelle Player
+    - 2. temporärer Hashindex wird für Playertabelle erstellt
+    - 3. sequentieller Scan der Tabelle Game mit Filterkriterium der where Bedingung
+    - 4. hash join mit der bedingung player_playerid = playerid wird durchgeführt
+    - 5. aggregate mit der Bedingung t0.name (wird für distinct benötigt, um doppelte werde zu filtern)
+
+Dauer ohne Optimierung:
+300 ms
+
+siehe Screenshot Query1
 
 query 2:
 SELECT t0.GAMEID, t0.GAMEBEGIN, t0.GAMEEND, COUNT(t1.QUESTIONID), SUM(CASE  WHEN (t3.CORRECTANSWER = t2.PLAYERQUESTIONANSWER) THEN ? ELSE ? END) FROM db2.Question t3, db2.gameAnswers t2, db2.Question t1, db2.Game t0 WHERE (((t0.PLAYER_PLAYERID = ?) AND (t3.QUESTIONID = t1.QUESTIONID)) AND ((t2.Game_GAMEID = t0.GAMEID) AND (t1.QUESTIONID = t2.question_questionId))) GROUP BY t0.GAMEID, t0.GAMEBEGIN, t0.GAMEEND
 	bind => [1, 0, 4194]
 
+Erklärung Explain:
+    - 1. hash join, der das Kreuzprodukt der Question Tabelle bildet (Autogenerierung durch jpql, wir wussten nicht, wie wir das wegbekommen), hat keinen wirklichen Sinn
+    - 2. sequentieller Scan der Tabelle Game mit Filterbedinung der where Bedingung
+    - 3. temporärer Hashindex wird für Game Tabelle erzeugt
+    - 4. sequentieller Scan der Tabelle Gameanswers
+    - 5. Hashjoin der Tabellen Game und Gameanswer mit der Bedinung gameid = gameid
+    - 6. zu generierter Ergebnismenge wird ein weiterer Hashjoin mit der Question Tabelle hinzugefügt
+    - 7. Ergebnismenge wird nach dem Kriterium gameid sortiert
+    - 8. Aggregate -> Gather Merge -> Aggregate: Arbeit wird auf mehrere Worker aufgeteilt, Group by Klauseln mit count und sum Aggregatsfunktionen werden umgesetzt
+
+Dauer ohne Optimierung:
+500 ms
+
 query 3:
-ELECT t0.NAME, COUNT(t1.GAMEID) FROM db2.Player t0, db2.Game t1 WHERE (t0.PLAYERID = t1.PLAYER_PLAYERID) GROUP BY t0.NAME ORDER BY COUNT(t1.GAMEID) DESC
+SELECT t0.NAME, COUNT(t1.GAMEID) FROM db2.Player t0, db2.Game t1 WHERE (t0.PLAYERID = t1.PLAYER_PLAYERID) GROUP BY t0.NAME ORDER BY COUNT(t1.GAMEID) DESC
+
+Erklärung Explain
+    - 1. sequentieller Scan der Tabelle Player
+    - 2. temporärer Hashindex wird für Player Tabelle erstellt
+    - 3. sequentieller Scan der Tabelle Game
+    - 4. Hashjoin der Tabellen Player und Game auf player_playerid = playerid
+    - 5. Aggregate -> Gather -> Aggregate: Arbeit wird auf mehrere Worker verteilt, Group by Klausel und count Aggregatsfunktion wird umgesetzt
+    - 6. Ergebnismenge wird nach Ergebnis der Count Aggregatsfunktion absteigend sortiert
+
+
+Dauer ohne Optimierung:
+200 ms
 
 
 query 4:
-[EL Fine]: sql: Connection(1305004711)--SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [45]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [32]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [27]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [3]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [10]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [14]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [19]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [36]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [31]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [48]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [49]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [33]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [1]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [23]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [42]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [46]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [50]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [30]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [17]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [2]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [25]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [12]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [4]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [16]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [24]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [11]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [9]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [44]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [22]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [34]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [37]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [35]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [29]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [7]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [43]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [40]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [26]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [47]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [20]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [28]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [13]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [41]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [8]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [18]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [39]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [15]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [6]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [51]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [38]
-[EL Fine]: sql: Connection(1305004711)--SELECT QUESTIONID, CORRECTANSWER, QUESTIONTEXT, CAT_CATID FROM db2.Question WHERE (CAT_CATID = ?)
-	bind => [21]
+SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC
+
+Erklärung Explain
+    - 1. sequentieller Scan der Tabelle Category, temporärer Hashindex wird erstellt
+    - 2. 2x sequentieller Scan der Tabelle Question, temporärer Hashindex wird erstellt (selbes Problem wie bei Query 2, Punk 1)
+    - 3. sequenteiller Scan der Tabelle Gameanswers
+    - 4. sequentieller Scan der Tabelle Game, temporärer Hashindex wird erstellt
+    - 5. Hashjoin der Tabellen Gameanswer und Game auf game_gameid = gameid
+    - 6. 2x Hashjoin der Ergebnismenge mit der Tabelle Question auf question_questionid = questionid
+    - 7. Hashjoin der Ergebnismenge mit der Tabelle Category auf cat_catid = catid
+    - 8. Ergebnismenge wird Aggregiert und nach catid sortiert für Group By Klausel
+    - 9. Ergebnnismenge wird mit Gather Merge und Aggregation bearbeitet (wahrscheinlich, um Count-Aggregatsfunktion zu bearbeiten)
+    - 10. Ergebnismenge wird für order by Klausel nach Menge der Count-Aggregatsfunktion absteigend sortiert
+
+Dauer ohne Optimierung:
+3400 ms
+
+
+Vorhandene Indexe:
+für Unique und PK Constraints
+
+Optimierung:
+
+Query 1:
+    - Index für Erfüllung der where Bedinung (auf gamebegin, gameend):
+    create index on db2.game(gamebegin);
+    create index on db2.game(gameend);
+
+Ausführungsdauer nach Indexerstellung: 180 ms ca. 40% schneller
+
+Query 2:
+    - Index auf FK Spalte von Game, Index auf questionID, gameID Spalte bei Tabelle Gameanswers
+    create index on db2.game(player_playerid);
+    create index on db2.gameanswers(game_gameid);
+    create index on db2.gameanswers(question_questionid);
+
+Ausführungsdauer nach Indexerstellung: 90 ms --> >80% schneller
+
+Query 3:
+    -
+
+Query 4:
+    - Index auf FK Spalte von Question
+    SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC
+
+    create index on db2.question(cat_catid);
