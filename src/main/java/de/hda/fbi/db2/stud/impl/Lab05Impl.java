@@ -1,11 +1,12 @@
 package de.hda.fbi.db2.stud.impl;
 
 import de.hda.fbi.db2.api.Lab02EntityManager;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 public class Lab05Impl {
 
@@ -25,16 +26,16 @@ public class Lab05Impl {
    * Starts the menu for all queries.
    * Interactive by the user.
    */
-  public void startMenu () {
+  public void startMenu() {
 
     // Open the entity manager.
     EntityManager em = lab02.getEntityManager();
 
     // Ask the user what to do.
-    Scanner scn = new Scanner(System.in);
-    String nextLine = "";
+    Scanner scn = new Scanner(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+    String nextLine;
     do {
-      System.out.println("\n######################################################################");
+      System.out.println("\n############################################################");
       System.out.println("Choose an option:");
       System.out.println("[1] Query 1");
       System.out.println("[2] Query 2");
@@ -54,9 +55,9 @@ public class Lab05Impl {
         Timestamp begin = new Timestamp(1612158720000L);
 
         // Query 1.
-        Query query = em.createQuery("select distinct g.player.name from Game g " +
-                                              "where g.gameBegin > :begin and " +
-                                              "g.gameEnd < :end")
+        Query query = em.createQuery("select distinct g.player.name from Game g "
+                                       + "where g.gameBegin > :begin and "
+                                       + "g.gameEnd < :end")
                         .setParameter("begin", begin)
                         .setParameter("end", end);
         headerString = "PlayerName";
@@ -70,14 +71,15 @@ public class Lab05Impl {
         int playerId = 4194;
 
         // Query 2.
-        Query q = em.createQuery("select g.gameId, g.gameBegin, g.gameEnd, count(key(p)), " +
-                                   "sum(case when (q.correctAnswer = value(p)) then 1 else 0 end) " +
-                                   "from Game g " +
-                                   "join g.playerQuestionAnswer p " +
-                                   "join Question q " +
-                                   "where g.player.playerID = :player " +
-                                   "and q.questionId = key(p).questionId " +
-                                   "group by g.gameId, g.gameBegin, g.gameEnd")
+        Query q = em.createQuery("select g.gameId, g.gameBegin, g.gameEnd, count(key(p)), "
+                                   + "sum(case when (q.correctAnswer = value(p)) "
+                                   + "then 1 else 0 end) "
+                                   + "from Game g "
+                                   + "join g.playerQuestionAnswer p "
+                                   + "join Question q "
+                                   + "where g.player.playerID = :player "
+                                   + "and q.questionId = key(p).questionId "
+                                   + "group by g.gameId, g.gameBegin, g.gameEnd")
                     .setParameter("player", playerId);
         resultList = q.getResultList();
         headerString = "gameId, gameBegin, gameEnd, countQuestions, countCorrectQuestions";
@@ -87,10 +89,10 @@ public class Lab05Impl {
       } else if (nextLine.compareTo("3") == 0) {
 
         // Query 3.
-        Query q = em.createQuery("select g.player.name, count(g) as anzahl " +
-                                   "from Game g " +
-                                   "group by g.player.name " +
-                                   "order by anzahl desc");
+        Query q = em.createQuery("select g.player.name, count(g) as anzahl "
+                                   + "from Game g "
+                                   + "group by g.player.name "
+                                   + "order by anzahl desc");
         resultList = q.getResultList();
         headerString = "PlayerName, CountGames";
 
@@ -98,21 +100,25 @@ public class Lab05Impl {
       } else if (nextLine.compareTo("4") == 0) {
 
         // Query 4.
-        Query q = em.createQuery("select q.cat, count(key(p)) as anzahl " +
-                                   "from Game g " +
-                                   "join g.playerQuestionAnswer p " +
-                                   "join Question q " +
-                                   "where q = key(p) " +
-                                   "group by q.cat " +
-                                   "order by anzahl desc");
+        Query q = em.createQuery("select q.cat, count(key(p)) as anzahl "
+                                   + "from Game g "
+                                   + "join g.playerQuestionAnswer p "
+                                   + "join Question q "
+                                   + "where q = key(p) "
+                                   + "group by q.cat "
+                                   + "order by anzahl desc");
         resultList = q.getResultList();
         headerString = "CategoryName, countAsked";
       }
 
       // Display the time for this query.
       if (resultList != null) {
-        System.out.println("Time for this query: " + (System.currentTimeMillis() - timeStart) + "ms.");
-        System.out.println("Size of the result list: " + resultList.size() + ". Printing the first 10 rows.");
+        System.out.println("Time for this query: "
+                             + (System.currentTimeMillis() - timeStart)
+                             + "ms.");
+        System.out.println("Size of the result list: "
+                             + resultList.size()
+                             + ". Printing the first 10 rows.");
 
         System.out.println("Header: " + headerString);
         if (resultList.size() > 10) {
