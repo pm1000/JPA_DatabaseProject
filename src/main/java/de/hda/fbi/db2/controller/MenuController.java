@@ -2,7 +2,6 @@ package de.hda.fbi.db2.controller;
 
 import de.hda.fbi.db2.api.Lab03Game;
 import de.hda.fbi.db2.stud.impl.Lab05Impl;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;

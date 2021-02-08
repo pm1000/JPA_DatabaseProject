@@ -156,19 +156,20 @@ public class Lab04Impl extends Lab04MassData {
       et = em.getTransaction();
       et.begin();
 
+      // Answers.
+      System.out.println("Antworten: ");
+      List<?> games = em.createQuery("select size(g.playerQuestionAnswer) "
+                                       + "from Game g").getResultList();
+      long avgNumPlayerQuestions = 0;
+      for (Object game : games) {
+        avgNumPlayerQuestions += (int) game;
+      }
+
       // Number of Players.
       long numOfPlayers = (long) em.createQuery("select count(p) from Player p").getSingleResult();
 
       // Number of Games.
       long numOfGames = (long) em.createQuery("select count(g) from Game g").getSingleResult();
-
-      // Answers.
-      System.out.println("Antworten: ");
-      List<?> games = em.createQuery("select size(g.playerQuestionAnswer) from Game g").getResultList();
-      long avgNumPlayerQuestions = 0;
-      for (Object game : games) {
-        avgNumPlayerQuestions += (int) game;
-      }
 
       // Print information.
       System.out.println("Anzahl der Spieler: " + numOfPlayers);
