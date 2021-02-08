@@ -1,6 +1,8 @@
-query 1:
-SELECT DISTINCT t0.NAME FROM db2.Player t0, db2.Game t1 WHERE (((t1.GAMEBEGIN > ?) AND (t1.GAMEEND < ?)) AND (t0.PLAYERID = t1.PLAYER_PLAYERID))
-	bind => [2021-02-01 06:52:00.0, 2021-02-08 19:59:51.144]
+Query 1:
+JPQL: "select distinct g.player.name from Game g where g.gameBegin > :begin and g.gameEnd < :end"
+Native SQL: "SELECT DISTINCT t0.NAME FROM db2.Player t0, db2.Game t1 WHERE (((t1.GAMEBEGIN > ?) AND (t1.GAMEEND < ?)) AND (t0.PLAYERID = t1.PLAYER_PLAYERID))"
+Testwerte: bind => [2021-02-01 06:52:00.0, 2021-02-08 19:59:51.144]
+
 Erklärung Explain:
     - 1. sequentieller Scan der Tabelle Player
     - 2. temporärer Hashindex wird für Playertabelle erstellt
@@ -8,14 +10,16 @@ Erklärung Explain:
     - 4. hash join mit der bedingung player_playerid = playerid wird durchgeführt
     - 5. aggregate mit der Bedingung t0.name (wird für distinct benötigt, um doppelte werde zu filtern)
 
-Dauer ohne Optimierung:
-300 ms
+Dauer ohne Optimierung: 300 ms
 
-siehe Screenshot Query1
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
 
-query 2:
-SELECT t0.GAMEID, t0.GAMEBEGIN, t0.GAMEEND, COUNT(t1.QUESTIONID), SUM(CASE  WHEN (t3.CORRECTANSWER = t2.PLAYERQUESTIONANSWER) THEN ? ELSE ? END) FROM db2.Question t3, db2.gameAnswers t2, db2.Question t1, db2.Game t0 WHERE (((t0.PLAYER_PLAYERID = ?) AND (t3.QUESTIONID = t1.QUESTIONID)) AND ((t2.Game_GAMEID = t0.GAMEID) AND (t1.QUESTIONID = t2.question_questionId))) GROUP BY t0.GAMEID, t0.GAMEBEGIN, t0.GAMEEND
-	bind => [1, 0, 4194]
+Query 2:
+JPQL: "select g.gameId, g.gameBegin, g.gameEnd, count(key(p)), sum(case when (q.correctAnswer = value(p)) then 1 else 0 end) from Game g join g.playerQuestionAnswer p join Question q where g.player.playerID = :player and q.questionId = key(p).questionId group by g.gameId, g.gameBegin, g.gameEnd"
+Native SQL: "SELECT t0.GAMEID, t0.GAMEBEGIN, t0.GAMEEND, COUNT(t1.QUESTIONID), SUM(CASE  WHEN (t3.CORRECTANSWER = t2.PLAYERQUESTIONANSWER) THEN ? ELSE ? END) FROM db2.Question t3, db2.gameAnswers t2, db2.Question t1, db2.Game t0 WHERE (((t0.PLAYER_PLAYERID = ?) AND (t3.QUESTIONID = t1.QUESTIONID)) AND ((t2.Game_GAMEID = t0.GAMEID) AND (t1.QUESTIONID = t2.question_questionId))) GROUP BY t0.GAMEID, t0.GAMEBEGIN, t0.GAMEEND"
+Testwerte:	bind => [1, 0, 4194]
 
 Erklärung Explain:
     - 1. hash join, der das Kreuzprodukt der Question Tabelle bildet (Autogenerierung durch jpql, wir wussten nicht, wie wir das wegbekommen), hat keinen wirklichen Sinn
@@ -30,8 +34,13 @@ Erklärung Explain:
 Dauer ohne Optimierung:
 2000 ms
 
-query 3:
-SELECT t0.NAME, COUNT(t1.GAMEID) FROM db2.Player t0, db2.Game t1 WHERE (t0.PLAYERID = t1.PLAYER_PLAYERID) GROUP BY t0.NAME ORDER BY COUNT(t1.GAMEID) DESC
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
+
+Query 3:
+JPQL: "select g.player.name, count(g) as anzahl from Game g group by g.player.name order by anzahl desc"
+Native SQL: SELECT t0.NAME, COUNT(t1.GAMEID) FROM db2.Player t0, db2.Game t1 WHERE (t0.PLAYERID = t1.PLAYER_PLAYERID) GROUP BY t0.NAME ORDER BY COUNT(t1.GAMEID) DESC
 
 Erklärung Explain
     - 1. sequentieller Scan der Tabelle Player
@@ -42,12 +51,15 @@ Erklärung Explain
     - 6. Ergebnismenge wird nach Ergebnis der Count Aggregatsfunktion absteigend sortiert
 
 
-Dauer ohne Optimierung:
-900 ms
+Dauer ohne Optimierung: 900 ms
 
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
 
-query 4:
-SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC
+Query 4:
+JPQL: "select q.cat, count(key(p)) as anzahl from Game g join g.playerQuestionAnswer p join Question q where q = key(p) group by q.cat order by anzahl desc"
+Native SQL: "SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC"
 
 Erklärung Explain
     - 1. sequentieller Scan der Tabelle Category, temporärer Hashindex wird erstellt
@@ -61,9 +73,11 @@ Erklärung Explain
     - 9. Ergebnnismenge wird mit Gather Merge und Aggregation bearbeitet (wahrscheinlich, um Count-Aggregatsfunktion zu bearbeiten)
     - 10. Ergebnismenge wird für order by Klausel nach Menge der Count-Aggregatsfunktion absteigend sortiert
 
-Dauer ohne Optimierung:
-8000 ms
+Dauer ohne Optimierung: 8000 ms
 
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
 
 Vorhandene Indexe:
 für Unique und PK Constraints
@@ -74,7 +88,6 @@ Query 1:
     - Index für Erfüllung der where Bedinung (auf gamebegin, gameend):
     create index on db2.game(gamebegin);
     create index on db2.game(gameend);
-
 Ausführungsdauer nach Indexerstellung: 180 ms ca. 40% schneller
 
 Query 2:
@@ -82,7 +95,6 @@ Query 2:
     create index on db2.game(player_playerid);
     create index on db2.gameanswers(game_gameid);
     create index on db2.gameanswers(question_questionid);
-
 Ausführungsdauer nach Indexerstellung: 350 ms --> >82% schneller
 
 Query 3:
@@ -91,7 +103,5 @@ Query 3:
 Query 4:
     - Index auf FK Spalte von Question
     SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC
-
     create index on db2.question(cat_catid);
-
-Ausführung nach Indexerstellung:
+Ausführung nach Indexerstellung: 7000ms
