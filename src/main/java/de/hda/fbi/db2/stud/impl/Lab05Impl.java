@@ -100,12 +100,10 @@ public class Lab05Impl {
       } else if (nextLine.compareTo("4") == 0) {
 
         // Query 4.
-        Query q = em.createQuery("select q.cat, count(key(p)) as anzahl "
+        Query q = em.createQuery("select key(p).cat.name as catName, count(key(p)) as anzahl "
                                    + "from Game g "
                                    + "join g.playerQuestionAnswer p "
-                                   + "join Question q "
-                                   + "where q = key(p) "
-                                   + "group by q.cat "
+                                   + "group by catName "
                                    + "order by anzahl desc");
         resultList = q.getResultList();
         headerString = "CategoryName, countAsked";

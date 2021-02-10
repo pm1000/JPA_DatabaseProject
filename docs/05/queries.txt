@@ -58,8 +58,8 @@ Dauer ohne Optimierung: 900 ms
 ##############################################################################################################
 
 Query 4:
-JPQL: "select q.cat, count(key(p)) as anzahl from Game g join g.playerQuestionAnswer p join Question q where q = key(p) group by q.cat order by anzahl desc"
-Native SQL: "SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC"
+JPQL: "select key(p).cat.name as catName, count(key(p)) as anzahl from Game g join g.playerQuestionAnswer p group by catName order by anzahl desc"
+Native SQL: "SELECT t0.NAME, COUNT(t1.QUESTIONID) FROM db2.Game t3, db2.gameAnswers t2, db2.Question t1, db2.Category t0 WHERE (((t2.Game_GAMEID = t3.GAMEID) AND (t1.QUESTIONID = t2.question_questionId)) AND (t0.CATID = t1.CAT_CATID)) GROUP BY t0.NAME ORDER BY COUNT(t1.QUESTIONID) DESC"
 
 Erklärung Explain
     - 1. sequentieller Scan der Tabelle Category, temporärer Hashindex wird erstellt
