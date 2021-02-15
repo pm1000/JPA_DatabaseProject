@@ -63,17 +63,17 @@ Native SQL: "SELECT t0.NAME, COUNT(t1.QUESTIONID) FROM db2.Game t3, db2.gameAnsw
 
 Erklärung Explain
     - 1. sequentieller Scan der Tabelle Category, temporärer Hashindex wird erstellt
-    - 2. 2x sequentieller Scan der Tabelle Question, temporärer Hashindex wird erstellt (selbes Problem wie bei Query 2, Punk 1)
-    - 3. sequenteiller Scan der Tabelle Gameanswers
+    - 2. sequentieller Scan der Tabelle Question, temporärer Hashindex wird erstellt
+    - 3. sequentieller Scan der Tabelle Gameanswers
     - 4. sequentieller Scan der Tabelle Game, temporärer Hashindex wird erstellt
     - 5. Hashjoin der Tabellen Gameanswer und Game auf game_gameid = gameid
-    - 6. 2x Hashjoin der Ergebnismenge mit der Tabelle Question auf question_questionid = questionid
+    - 6. Hashjoin der Ergebnismenge mit der Tabelle Question auf question_questionid = questionid
     - 7. Hashjoin der Ergebnismenge mit der Tabelle Category auf cat_catid = catid
     - 8. Ergebnismenge wird Aggregiert und nach catid sortiert für Group By Klausel
     - 9. Ergebnnismenge wird mit Gather Merge und Aggregation bearbeitet (wahrscheinlich, um Count-Aggregatsfunktion zu bearbeiten)
     - 10. Ergebnismenge wird für order by Klausel nach Menge der Count-Aggregatsfunktion absteigend sortiert
 
-Dauer ohne Optimierung: 8000 ms
+Dauer ohne Optimierung: 9000 ms
 
 ##############################################################################################################
 ##############################################################################################################
@@ -98,10 +98,11 @@ Query 2:
 Ausführungsdauer nach Indexerstellung: 350 ms --> >82% schneller
 
 Query 3:
-    -
+    - Index muss auf der FK-Key Spalte player_playerId liegen (schon durch query 2 umgesetzt)
+Ausführungsdauer nach Indexerstellung: 450ms --> 50% schneller
 
 Query 4:
     - Index auf FK Spalte von Question
     SELECT t0.CATID, t0.NAME, COUNT(t2.QUESTIONID) FROM db2.Game t4, db2.gameAnswers t3, db2.Question t2, db2.Question t1, db2.Category t0 WHERE ((t2.QUESTIONID = t1.QUESTIONID) AND (((t3.Game_GAMEID = t4.GAMEID) AND (t2.QUESTIONID = t3.question_questionId)) AND (t0.CATID = t1.CAT_CATID))) GROUP BY t0.CATID, t0.NAME ORDER BY COUNT(t2.QUESTIONID) DESC
     create index on db2.question(cat_catid);
-Ausführung nach Indexerstellung: 7000ms
+Ausführung nach Indexerstellung: 6300ms --> ca. 30% schneller
