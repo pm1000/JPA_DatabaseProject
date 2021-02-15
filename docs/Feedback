@@ -5,3 +5,18 @@ Kann nicht testiert werden. Ausgabe der Kategorien, Fragen und Antworten fehlt .
 Nacharbeit ok, Testat erteilt.
 
 Praktikum 2:
+
+In Ordnung, Sie haben das Testat
+
+Praktikum 3:
+
+Soweit in Ordnung. Bitte bis zum nächsten Praktikum folgendes korrigieren:
+
+- In Klassendiagramm soll Lab01Impl nicht angezeigt werden, weil es kein Entity ist.
+- Fehlerbehandlung: Ich werde nach der Anzahl der Kategorien gefragt und tippe 1 ein, wenn ich dann die Kategorien auswähle kann ich mehr als eine auswählen
+
+Praktikum 4:
+
+Prima, Sie haben das Testat.
+
+Schöner Bericht, Problem beim Batch-Writing sollten wir im Praktikum besprechen.
